@@ -1,0 +1,20 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-findvegan-staging-232132-authRole",
+      "UnauthRoleArn": "arn:aws:iam::840056419935:role/amplify-findvegan-staging-232132-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::840056419935:role/amplify-findvegan-staging-232132-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-findvegan-staging-232132-deployment",
+      "UnauthRoleName": "amplify-findvegan-staging-232132-unauthRole",
+      "StackName": "amplify-findvegan-staging-232132",
+      "StackId": "arn:aws:cloudformation:us-east-1:840056419935:stack/amplify-findvegan-staging-232132/974e6cd0-58a9-11ed-bd91-0adbb06ea993",
+      "AmplifyAppId": "da1w7vpbpujmx"
+    },
+    "categories": {
+      "auth": {
+        "FindVegan": {}
+      }
+    }
+  }
+}
