@@ -8,7 +8,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './src/navigation/RootNavigator';
 import RestaurantDetailsScreen from './src/screens/RestaurantDetailsScreen';
 import CartScreen from './src/screens/CartScreen';
-import OrderDetailsScreen from './src/screens/OrderDetailsScreen'
+import OrderDetailsScreen from './src/screens/OrderDetailsScreen';
+import PaymentMethodScreen from './src/screens/PaymentMethodScreen';
+import CardListScreen from './src/screens/CardListScreen';
+import OrderConfirmationScreen from './src/screens/OrderConfirmationScreen';
+import SearchScreen from './src/screens/SearchScreen'
 
 Amplify.configure(awsconfig)
 
@@ -20,9 +24,13 @@ function App() {
         <Text>Start FindVegan!</Text>
         <Text style={{color: 'red'}} onPress={()=>{Auth.signOut()}}>Logout</Text>
       </View> */}
-      {/* <RestaurantDetailsScreen /> */}
+      <RestaurantDetailsScreen />
       {/* <CartScreen /> */}
-      <OrderDetailsScreen />
+      {/* <OrderDetailsScreen /> */}
+      {/* <PaymentMethodScreen /> */}
+      {/* <CardListScreen /> */}
+      {/* <OrderConfirmationScreen /> */}
+      {/* <SearchScreen /> */}
         {/* <RootNavigator /> */}
     </NavigationContainer>
   );

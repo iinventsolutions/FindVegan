@@ -1,6 +1,5 @@
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
-import { container } from 'aws-amplify';
 
 const CartScreen = () => {
 

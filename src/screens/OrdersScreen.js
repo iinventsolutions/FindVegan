@@ -3,7 +3,9 @@ import { AntDesign } from '@expo/vector-icons';
 
 const OrdersScreen = () => {
   return (
-    <View>OrdersScreen</View>
+    <View>
+      <Text>OrdersScreen</Text>
+    </View>
   )
 }
 

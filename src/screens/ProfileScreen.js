@@ -3,7 +3,9 @@ import { AntDesign } from '@expo/vector-icons';
 
 const ProfileScreen = () => {
   return (
-    <View>ProfileScreen</View>
+    <View>
+      <Text>ProfileScreen</Text>
+    </View>
   )
 }
 
