@@ -19,7 +19,7 @@ const PaymentMethodScreen = () => {
         </View>
 
         <Pressable style={styles.button} onPress={addCreditCards}>
-            <Text style={{color: '#419D47', fontWeight: 'bold'}}>ADD CREDIT CARDS</Text>
+            <Text style={{color: '#419D47', fontWeight: 'bold'}}>ADD MOMO CREDENTILAS</Text>
         </Pressable>
     </View>
   )

@@ -1,11 +1,14 @@
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { container } from 'aws-amplify';
+import { useNavigation } from '@react-navigation/native';
 
 const OrderDetailsScreen = () => {
 
+  const navigation = useNavigation();
+
   const checkOut = () => { 
-    
+    navigation.navigate("Payment Options")
    }
 
   return (
@@ -47,10 +50,10 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     backgroundColor: '#fff',
-
+    height: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 50
+    // justifyContent: 'center',
+    // marginTop: 50
   },
 
   foodList: {

@@ -32,12 +32,20 @@ const SearchScreen = () => {
         <View style={{width: '100%', marginTop: 20}}>
           <Text style={{marginLeft: 15, fontSize: 18, fontWeight: 'bold'}}>Top Categories</Text>
         </View>
-        <View style={styles.searchContainer}>
+        {/* <ScrollView> */}
+        <ScrollView style={{width: '100%'}}>
+          <View style={styles.searchContainer}>
             <TopCategories />
             <TopCategories />
             <TopCategories />
             <TopCategories />
-        </View>
+            <TopCategories />
+            <TopCategories />
+            <TopCategories />
+            <TopCategories />
+          </View>
+        </ScrollView>
+        {/* </ScrollView> */}
     </View>
   )
 }
@@ -52,6 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // marginTop: 60,
     display: 'flex',
+    height: '100%',
     flexDirection: 'column'
   },
 

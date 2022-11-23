@@ -1,10 +1,10 @@
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 
-const OrderConfirmationScreen = () => {
+const OrderConfirmationScreen = ({navigation}) => {
 
     const keepBrowsing = () => { 
-    
+      navigation.navigate("Restaurants")
     }
 
   return (

@@ -1,9 +1,12 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const PopularOrders = () => {
+    const navigation = useNavigation();
+
   return (
-    <View style={styles.container}>
+    <Pressable onPress={()=>{navigation.navigate("Main Dish")}} style={styles.container}>
         
         <View style={styles.ImgWrapper}>
             <Image source={require('../../assets/small.png')} style={styles.ImageContainer} />
@@ -16,10 +19,10 @@ const PopularOrders = () => {
             </View>
         </View>
         <View style={styles.foodDetails}>
-            <Text style={{color: '#343F49', fontFamily: 'Mulish', fontWeight: '700', fontSize: 16}}>Mayfield Bakery & Cafe</Text>
-            <Text style={{color: '343F49', opacity: 0.5, fontFamily: 'Mulish'}}>($$$) Thai Cuisine</Text>
+            <Text style={{color: '#343F49', fontWeight: '700', fontSize: 16}}>Mayfield Bakery & Cafe</Text>
+            <Text style={{color: '343F49', opacity: 0.5}}>($$$) Thai Cuisine</Text>
         </View>
-    </View>
+    </Pressable>
   )
 }
 

@@ -1,12 +1,29 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import {View, Text, StyleSheet, Image, ScrollView, ActivityIndicator} from 'react-native'
 import PopularOrders from '../components/PopularOrders';
+import { useRoute } from '@react-navigation/native';
 
 import { AntDesign,
         MaterialIcons,
         Ionicons
         } from '@expo/vector-icons';
+import MainDishesListItem from '../components/MainDishesListItem';
 
-const RestaurantDetailsScreen = () => {
+const RestaurantDetailsScreen = ({navigation}) => {
+
+  const [restaurant, setRestaurant] = useState(null)
+
+  const route = useRoute();
+  const id = route.params?.id
+
+  console.warn(id)
+
+  // if(!restaurant){
+  //   return(
+  //     <ActivityIndicator />
+  //   )
+  // }
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
@@ -24,11 +41,20 @@ const RestaurantDetailsScreen = () => {
           </View>
         </View>
 
-        <Image
-            source={require('../../assets/details.png')}
-            style={{ width: "100%", height: 310, }}
-            // resizeMode="cover"
-        />
+        <View>
+              <Image
+                  source={require('../../assets/details.png')}
+                  style={{ width: "100%", height: 310, }}
+                  // resizeMode="cover"
+              />
+              <Ionicons
+                name='arrow-back-circle'
+                size={50}
+                color="white"
+                style={styles.backIcon}
+                onPress={()=>{navigation.goBack()}}
+             />
+        </View>
 
         <View style={styles.restaurantName}>
           <Text style={{fontSize: 22, fontWeight: 'bold'}}>Mayfield Bakery & Cafe</Text>
@@ -58,12 +84,21 @@ const RestaurantDetailsScreen = () => {
 
       <Text style={{padding: 15, fontSize: 23, fontWeight: 'bold'}}>Popular Orders</Text>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}>
-            <PopularOrders />
-            <PopularOrders />
-            <PopularOrders />
-            <PopularOrders />
-            <PopularOrders />
-        </ScrollView>
+          <PopularOrders />
+          <PopularOrders />
+          <PopularOrders />
+          <PopularOrders />
+          <PopularOrders />
+      </ScrollView>
+      <View>
+        <Text style={{padding: 15, fontSize: 23, fontWeight: 'bold'}}>Main Dishes</Text>
+      </View>
+      <View style={styles.ListItemsContainer}>
+        <MainDishesListItem />
+        <MainDishesListItem />
+        <MainDishesListItem />
+        <MainDishesListItem />
+      </View>
     </ScrollView>
   )
 }
@@ -139,6 +174,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     // borderWidth: 2
-}
+  },
+  ListItemsContainer: {
+    // marginTop: 15,
+    // borderWidth: 1,
+    width: '100%',
+    // height: '49%',
+    padding: 10
+  },
+  backIcon: {
+    position: 'absolute',
+    top: 10,
+    left: 10
+  },
 
 });

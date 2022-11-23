@@ -1,10 +1,17 @@
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
-const CartScreen = () => {
+const CartScreen = ({navigation}) => {
+
+  const route = useRoute();
+
+  const food = route.params?.dishItem
+
+  console.warn(food)
 
   const checkOut = () => { 
-    
+    navigation.navigate("Order Details")
    }
 
   return (
@@ -28,10 +35,10 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     backgroundColor: '#fff',
-
+    height: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 50
+    // justifyContent: 'center',
+    // marginTop: 50
   },
 
   foodList: {

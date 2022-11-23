@@ -6,15 +6,15 @@ const TopCategories = () => {
     <View style={styles.container}>
         
         <View style={styles.ImgWrapper}>
-            <Image source={require('../../assets/doha.png')} style={styles.ImageContainer} />
-            <View style={styles.foodRating}>
+            <Image source={require('../../assets/bg.png')} style={styles.ImageContainer} />
+            {/* <View style={styles.foodRating}>
                 <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 16, textAlign: 'center'}}>Vegan Fast Food</Text>
-            </View>
+            </View> */}
         </View>
-        {/* <View style={styles.foodDetails}>
-            <Text style={{color: '#343F49', fontFamily: 'Mulish', fontWeight: '700', fontSize: 16}}>Mayfield Bakery & Cafe</Text>
-            <Text style={{color: '343F49', opacity: 0.5, fontFamily: 'Mulish'}}>($$$) Thai Cuisine</Text>
-        </View> */}
+        <View style={styles.foodDetails}>
+            <Text style={{color: '#343F49', fontWeight: '700', fontSize: 16}}>The Halal guys</Text>
+            <Text style={{color: '343F49', opacity: 0.5}}>($$$) Thai Cuisine</Text>
+        </View>
     </View>
   )
 }
@@ -63,13 +63,15 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 15,
         backgroundColor: '#000',
-        opacity: .6,
+        opacity: 0.5,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20
     },
 
     foodDetails: {
-        padding: 15
+        padding: 15,
+        // borderWidth: 1,
+        width: 160
     }
   });

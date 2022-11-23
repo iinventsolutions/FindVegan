@@ -1,25 +1,35 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-const TopRestaurants = () => {
+const DEFAULT_IMAGE = 'https://media-cdn.tripadvisor.com/media/photo-s/10/00/b6/f6/pizza-good-wine.jpg'
+
+const TopRestaurants = ({restaurant}) => {
+
+    const navigation = useNavigation();
+
+    const goToRestaurantDetails = () => { 
+        navigation.navigate("RestaurantDetails", {id: 1})
+     }
+
   return (
-    <View style={styles.container}>
+    <Pressable onPress={goToRestaurantDetails} style={styles.container}>
         
         <View style={styles.ImgWrapper}>
-            <Image source={require('../../assets/doha.png')} style={styles.ImageContainer} />
+            <Image source={{uri: restaurant.image.startsWith('http')? restaurant?.image : DEFAULT_IMAGE}} style={styles.ImageContainer} />
             <View style={styles.foodRating}>
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
-                <Text style={{color: '#fff'}}>(134)</Text>
+                <Text style={{color: '#fff'}}>({restaurant?.rating.toFixed(1)})</Text>
             </View>
         </View>
         <View style={styles.foodDetails}>
-            <Text style={{color: '#343F49', fontFamily: 'Mulish', fontWeight: '700', fontSize: 16}}>Mayfield Bakery & Cafe</Text>
-            <Text style={{color: '343F49', opacity: 0.5, fontFamily: 'Mulish'}}>($$$) Thai Cuisine</Text>
+            <Text style={{color: '#343F49', fontWeight: '700', fontSize: 16}}>{restaurant?.name}</Text>
+            <Text style={{color: '343F49', opacity: 0.5}} numberOfLines={1}>($$) Thai Cuisine</Text>
         </View>
-    </View>
+    </Pressable>
   )
 }
 
@@ -30,7 +40,7 @@ const styles = StyleSheet.create({
     //   flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      marginRight: 15
+      marginRight: 5
     //   backgroundColor: '#fff',
     },
 
@@ -47,7 +57,7 @@ const styles = StyleSheet.create({
     ImageContainer: {
         display: 'flex',
         height: '100%',
-        width: '100%',
+        width: 200,
         justifyContent: 'flex-end',
         // borderWidth: 1,
         resizeMode: 'cover',
