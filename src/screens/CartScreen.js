@@ -1,30 +1,47 @@
-import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import {View, Text, StyleSheet, Image, ScrollView, Pressable, ActivityIndicator} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import { useOrderContext } from '../contexts/OrderContex';
+import { useStateValue } from '../components/BasketContex/StateProvider';
+import { getBasketTotal } from '../components/BasketContex/reducer';
 
 const CartScreen = ({navigation}) => {
 
   const route = useRoute();
+  const [{ basket }] = useStateValue();
+  const [order, setOrder] = useState()
+  const { getOrder } = useOrderContext()
 
-  const food = route.params?.dishItem
+  // const food = route.params?.dishItem
+  const id = route.params?.id;
 
-  console.warn(food)
+  console.warn(id)
 
-  const checkOut = () => { 
-    navigation.navigate("Order Details")
-   }
+  useEffect(() => {
+    getOrder(id).then(setOrder);
+  }, [])
+
+  if(!order){
+    return <ActivityIndicator />
+  }
+  
+  console.log("The order dishes are: ",order.dishes);
 
   return (
     <View style={styles.container}>
-      <View style={styles.foodList}>
-        <View style={{width: 25, height: 25, borderWidth: 1, borderRadius: 6, borderColor: '#419D47', justifyContent: 'center', alignItems: 'center'}}><Text style={{color: '#419D47', fontWeight: 'bold'}}>1</Text></View>
-        <View><Text style={{fontSize: 19, fontWeight: 'bold', color: '#4F4F4F'}}>Cookie Sandwich</Text></View>
-        <View><Text style={{color: '#419D47', fontWeight: 'bold', fontSize: 16}}>USD7.4</Text></View>
+      <View>
+        <Text>{order.status}</Text>
       </View>
+      {order.dishes.reverse()?.map(basketinfo=>(<View key={basketinfo.id} style={styles.foodList}>
+        <View style={{width: 25, height: 25, borderWidth: 1, borderRadius: 6, borderColor: '#419D47', justifyContent: 'center', alignItems: 'center'}}><Text style={{color: '#419D47', fontWeight: 'bold'}}>{basketinfo.quantity}</Text></View>
+        <View><Text style={{fontSize: 19, fontWeight: 'bold', color: '#4F4F4F'}}>{basketinfo.Dish.name}</Text></View>
+        <View><Text style={{color: '#419D47', fontWeight: 'bold', fontSize: 16}}>GH¢{basketinfo.Dish.price}</Text></View>
+      </View>))}
 
-      <Pressable style={styles.button} onPress={checkOut}>
+      {/* <Pressable style={styles.button} onPress={checkOut}>
         <Text style={{color: 'white'}}>CHECKOUT</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   )
 }

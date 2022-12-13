@@ -1,26 +1,36 @@
-import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
+import {View, Text, StyleSheet, Image, ScrollView, Pressable, FlatList} from 'react-native'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { container } from 'aws-amplify';
 import { useNavigation } from '@react-navigation/native';
+import { getBasketTotal } from '../components/BasketContex/reducer';
+import { useStateValue } from '../components/BasketContex/StateProvider';
+import CartItem from '../components/CartItem';
+import { useRoute } from '@react-navigation/native';
+import { useOrderContext } from '../contexts/OrderContex';
 
 const OrderDetailsScreen = () => {
 
+  const { createOrder } = useOrderContext()
+
   const navigation = useNavigation();
+  const [{basket}, dispatch] = useStateValue();
+  const route = useRoute();
+  const df = route.params?.df //delivery fee
 
   const checkOut = () => { 
     navigation.navigate("Payment Options")
    }
 
   return (
+    // <ScrollView>
     <View style={styles.container}>
-      <View style={styles.foodList}>
-        <View style={{width: 25, height: 25, borderWidth: 1, borderRadius: 6, borderColor: '#419D47', justifyContent: 'center', alignItems: 'center'}}><Text style={{color: '#419D47', fontWeight: 'bold'}}>1</Text></View>
-        <View style={{width: 200}}>
-          <Text style={{fontSize: 19, fontWeight: '500', color: '#4F4F4F'}}>Cookie Sandwich</Text>
-          <Text style={{color: '343F49', opacity: 0.5, fontSize: 15}}>Shortbread, chocolate turtle cookies, and red velvet.</Text>
-        </View>
-        <View><Text style={{color: '#419D47', fontWeight: 'bold', fontSize: 16}}>USD7.4</Text></View>
-      </View>
+      <FlatList 
+          // horizontal
+          // showsHorizontalScrollIndicator={false}
+          data = {basket}
+          renderItem = {({item})=> <CartItem basketinfo={item} />}
+          showsVerticalScrollIndicator = {false}
+        />
 
       <View style={styles.subTotal}>
         <View>
@@ -30,17 +40,18 @@ const OrderDetailsScreen = () => {
           <Text style={styles.addMore}>Add more items</Text>
         </View>
         <View>
-          <Text style={styles.subInfo}>$29.00</Text>
-          <Text style={styles.subInfo}>$0.00</Text>
-          <Text style={styles.subInfo}>$29.00</Text>
+          <Text style={styles.subInfo}>GH¢{getBasketTotal(basket).toFixed(2)>0?((getBasketTotal(basket)).toFixed(2)):0}</Text>
+          <Text style={styles.subInfo}>GHS{df.toFixed(2)}</Text>
+          <Text style={styles.subInfo}>GH¢{getBasketTotal(basket).toFixed(2)>0?((getBasketTotal(basket)+df).toFixed(2)):0}</Text>
           <MaterialIcons style={styles.arrow} name="keyboard-arrow-right" size={24} color="black" />
         </View>
       </View>
 
-      <Pressable style={styles.button} onPress={checkOut}>
-        <Text style={{color: 'white', fontWeight: 'bold'}}>CONFIRM PURCHASE</Text>
+      <Pressable style={styles.button} onPress={createOrder}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>CREATE ORDER</Text>
       </Pressable>
     </View>
+    // </ScrollView>
   )
 }
 
@@ -78,7 +89,7 @@ const styles = StyleSheet.create({
   subTotal: {
     // borderWidth: 1,
     width: '90%',
-    height: 180,
+    height: 130,
     marginTop: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',

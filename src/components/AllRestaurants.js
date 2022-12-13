@@ -1,9 +1,17 @@
-import {View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const AllRestaurants = ({restaurant}) => {
+
+    const navigation = useNavigation();
+
+    const goToRestaurantDetails = () => { 
+        navigation.navigate("RestaurantDetails", {id: restaurant.id})
+     }
+
   return (
-    <View style={styles.container}>
+    <Pressable onPress={goToRestaurantDetails} style={styles.container}>
         <View >
             <View style={styles.ImgWrapper}>
                 <Image source={{uri: restaurant.image}} style={styles.ImageContainer} />
@@ -20,7 +28,7 @@ const AllRestaurants = ({restaurant}) => {
             <Text style={{color: '#343F49', fontWeight: '700', fontSize: 16}}>{restaurant.name}</Text>
             <Text style={{color: '343F49', opacity: 0.5}}>($$$) All Organic Food</Text>
         </View>
-    </View>
+    </Pressable>
   )
 }
 

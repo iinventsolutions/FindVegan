@@ -14,6 +14,7 @@ import OrderConfirmationScreen from '../screens/OrderConfirmationScreen';
 import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import ReferToFriendsScreen from '../screens/ReferToFriendsScreen';
 import AddSocialScreen from '../screens/AddSocialScreen';
+import OrderPlacingScreen from '../screens/OrderPlacingScreen';
 
 import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -24,6 +25,7 @@ import { View, Text } from 'react-native';
 const Stack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
+const OrderStack = createNativeStackNavigator();
 
 const RootNavigator = () => {
   return (
@@ -40,10 +42,11 @@ const HomeStackNavigator = () => {
       <Stack.Screen  name="Restaurants" component={HomeScreen} options={{headerShown: true}}/>
       <Stack.Screen  name="RestaurantDetails" component={RestaurantDetailsScreen} options={{headerShown: false}}/>
       <Stack.Screen  name="Main Dish" component={MainDishDetails}/>
-      <Stack.Screen  name="Cart" component={CartScreen}/>
-      <Stack.Screen  name="Order Details" component={OrderDetailsScreen}/>
+      
+      <Stack.Screen  name="Cart Details" component={OrderDetailsScreen}/>
       <Stack.Screen  name="Payment Options" component={CardListScreen}/>
       <Stack.Screen  name="Payment Confirmed" component={OrderConfirmationScreen}/>
+      <Stack.Screen  name="Placing Order" component={OrderPlacingScreen}/>
     </HomeStack.Navigator>
   )
  }
@@ -52,10 +55,19 @@ const HomeStackNavigator = () => {
     return(
       <ProfileStack.Navigator>
         <Stack.Screen  name="Profile" component={ProfileScreen} />
-        <Stack.Screen  name="Profile Info" component={ProfileInfoScreen}/>
+        <Stack.Screen  name="Profile settings" component={ProfileInfoScreen}/>
         <Stack.Screen  name="Add Social" component={AddSocialScreen} />
         <Stack.Screen  name="Refer" component={ReferToFriendsScreen}/>
     </ProfileStack.Navigator>
+    )
+  }
+
+  const OrderStackNavigator = () => { 
+    return(
+      <OrderStack.Navigator>
+        <Stack.Screen  name="Order List" component={OrdersScreen} options={{headerShown: true}} />
+        <Stack.Screen  name="Order Details" component={CartScreen}/>
+    </OrderStack.Navigator>
     )
   }
 
@@ -77,8 +89,8 @@ const HomeTabs = () => {
         />
       <Tab.Screen 
         name="Orders" 
-        component={OrdersScreen} 
-        options={{ tabBarIcon: ({focused}) => ( <Ionicons name="list-outline" size={24} color={focused ? '#419D47' : '#000'} />)}}
+        component={OrderStackNavigator} 
+        options={{headerShown: false, tabBarIcon: ({focused}) => ( <Ionicons name="list-outline" size={24} color={focused ? '#419D47' : '#000'} />)}}
         />
       <Tab.Screen 
         name="Profile " 

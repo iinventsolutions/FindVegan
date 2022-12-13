@@ -1,27 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native'
+import {View, Text, StyleSheet, ScrollView, FlatList, SafeAreaView} from 'react-native'
 import NearestRestaurants from '../components/NearestRestaurants';
 import TopRestaurants from '../components/TopRestaurants';
 import AllRestaurants from '../components/AllRestaurants';
 import { DataStore } from 'aws-amplify' 
 import { Restaurant } from '../models/index'
+import { useNavigation, useNavigationState } from '@react-navigation/native';
+import { useStateValue } from '../components/BasketContex/StateProvider';
 
 const HomeScreen = () => {
 
+    const index = useNavigationState(state => state.index);
+
     const [restaurant, setRestaurant] = useState([])
+    const [{ basket }, dispatch] = useStateValue()
 
     const fetchRestaurants = async () =>{
-        const results = await DataStore.query(Restaurant);
-        // console.log(results)
-        setRestaurant(results)
+        try {
+            const results = await DataStore.query(Restaurant);
+            setRestaurant(results)
+        } catch (error) {
+            console(error)
+        }
+        
     }
+    
+
 
     useEffect(() => {
         fetchRestaurants()
+        console.log("Home Stack state: ", index);
     }, [])
     
 
   return (
+    
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View>
             <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Top Restaurants</Text>

@@ -9,7 +9,7 @@ const TopRestaurants = ({restaurant}) => {
     const navigation = useNavigation();
 
     const goToRestaurantDetails = () => { 
-        navigation.navigate("RestaurantDetails", {id: 1})
+        navigation.navigate("RestaurantDetails", {id: restaurant.id})
      }
 
   return (

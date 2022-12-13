@@ -1,28 +1,30 @@
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 
-const MainDishesListItem = () => {
+const MainDishesListItem = ({dish, restaurantid}) => {
   
   const navigation = useNavigation();
 
-  const DishMenu = () => { 
-    navigation.navigate("Main Dish")
+  const DishMenu = (dishId) => { 
+    navigation.navigate("Main Dish", {id: dishId, resId: restaurantid})
    }
 
   return (
-    <Pressable onPress={()=>{DishMenu()}} style={styles.container}>
+    <>
+    <Pressable onPress={()=>{DishMenu(dish?.id)}} style={styles.container}>
         <View style={{width: '65%'}}>
-            <Text style={{fontWeight: 'bold', lineHeight: 30}}>Vegan Mac & Cheese</Text>
-            <Text style={{color: 'gray', lineHeight: 30}} numberOfLines={2}>Chili sauce + coleslaw+ cheese</Text>
-            <View style={{height: 25, width: 90, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: '#63D17F', marginTop: 5}}><Text style={{fontWeight: 'bold', color: '#fff'}}>GHS 36.00</Text></View>
+            <Text style={{fontWeight: 'bold', lineHeight: 30}}>{dish.name}</Text>
+            <Text style={{color: 'gray', lineHeight: 30}} numberOfLines={1}>{dish.description}</Text>
+            <View style={{height: 25, width: 90, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: '#63D17F', marginTop: 5}}><Text style={{fontWeight: 'bold', color: '#fff'}}>GHS {dish.price}</Text></View>
         </View>
         <View style={{width: '30%'}}>
         <Image
-            source={require('../../assets/details.png')}
+            source={{uri: dish.image}}
             style={{ width: '100%', height: '80%', borderRadius: 7}}
             />
         </View>
     </Pressable>
+    </>
   )
 }
 

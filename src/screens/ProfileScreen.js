@@ -18,9 +18,13 @@ const ProfileScreen = () => {
     navigation.navigate('Add Social')
    }
 
+   const ProfileInfo = () => { 
+    navigation.navigate('Profile settings')
+   }
+
   return (
     <View style={styles.container}>
-      <Pressable onPress={Details} style={styles.foodList}>
+      <Pressable onPress={ProfileInfo} style={styles.foodList}>
         <View style={{width: 30, height: 25}}>
           <Ionicons name="person" size={24} color="black" />
         </View>
