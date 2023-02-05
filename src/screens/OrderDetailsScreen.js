@@ -1,6 +1,7 @@
-import {View, Text, StyleSheet, Image, ScrollView, Pressable, FlatList} from 'react-native'
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import {View, Text, StyleSheet, Image, Pressable, FlatList, ActivityIndicator} from 'react-native'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { container } from 'aws-amplify';
+import { container, input } from 'aws-amplify';
 import { useNavigation } from '@react-navigation/native';
 import { getBasketTotal } from '../components/BasketContex/reducer';
 import { useStateValue } from '../components/BasketContex/StateProvider';
@@ -8,7 +9,33 @@ import CartItem from '../components/CartItem';
 import { useRoute } from '@react-navigation/native';
 import { useOrderContext } from '../contexts/OrderContex';
 
+// BottomSheet imports
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import LoadingItems from '../components/LoadingItems';
+import { Ionicons } from '@expo/vector-icons';
+
+// Google Autocomplete imports
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 const OrderDetailsScreen = () => {
+
+  navigator.geolocation = require('react-native-geolocation-service');
+
+  // BottomSheet Start
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [googlePlaceName, setGooglePlaceName] = useState(null)
+
+  // variables
+  const snapPoints = useMemo(() => ["75%"], []);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+  // BottomSheet end
 
   const { createOrder } = useOrderContext()
 
@@ -23,7 +50,7 @@ const OrderDetailsScreen = () => {
 
   return (
     // <ScrollView>
-    <View style={styles.container}>
+    <GestureHandlerRootView style={[styles.container, {backgroundColor: isOpen? 'grey': '#fff'}]}>
       <FlatList 
           // horizontal
           // showsHorizontalScrollIndicator={false}
@@ -31,6 +58,7 @@ const OrderDetailsScreen = () => {
           renderItem = {({item})=> <CartItem basketinfo={item} />}
           showsVerticalScrollIndicator = {false}
         />
+        
 
       <View style={styles.subTotal}>
         <View>
@@ -47,10 +75,65 @@ const OrderDetailsScreen = () => {
         </View>
       </View>
 
-      <Pressable style={styles.button} onPress={createOrder}>
-        <Text style={{color: 'white', fontWeight: 'bold'}}>CREATE ORDER</Text>
+      <Pressable style={styles.button} onPress={()=>{setIsOpen(true)}}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>CONFIRM ORDER</Text>
       </Pressable>
-    </View>
+      {isOpen && <BottomSheet
+          innderRef={bottomSheetRef}
+          index={0}
+          enablePanDownToClose={true}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          onClose={()=>setIsOpen(false)}
+        >
+          <BottomSheetView style={styles.contentContainer}>
+          <View style={{width: '90%',flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Text style={{fontSize: 24, fontWeight: 'bold'}}>Checkout</Text>
+                <ActivityIndicator size={28} color='#419D47'/>
+              </View>
+              <View style={{width: '100%', display: 'flex', alignItems: 'center', position: 'relative'}}>
+                <View style={styles.GooglePlacesSearch}>
+                <Ionicons name="location-sharp" size={18} style={{opacity: 0.5, marginTop: 13}} color="black" />
+                  <GooglePlacesAutocomplete
+                    placeholder='Enter Location'
+                    // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                    // currentLocationLabel="Current location"
+                    fetchDetails={true}
+                    nearbyPlacesAPI={true}
+                    enablePoweredByContainer={false}
+                    styles={{textInput: styles.input}}
+                    getCurrentLocation
+                    onPress={(data, details = null) => {
+                      // 'details' is provided when fetchDetails = true
+                      console.log("Map data is: ",data);
+                      setGooglePlaceName(data.description)
+                    }}
+                    onFail={(error) => console.error("Map error is: ",error)}
+                    query={{
+                      key: 'AIzaSyB-LKht_lArgYnXm8ofVkCzPLZ0BlXwLnU',
+                      language: 'en',
+                      components: 'country:gh'
+                    }}
+                    
+                  />
+                </View>
+              </View>
+              <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
+              {/* <View style={{ alignItems: 'center' }}> */}
+ 
+              <View>
+                <LoadingItems title={googlePlaceName} sub={'Meet at door'} />
+                <LoadingItems title={'Standard delivery: 10-20 min'} sub={''}/>
+                <LoadingItems title={''} sub={'My order,Derek'}/>
+              </View>
+              <Pressable style={[styles.button, {margin: 30}]} onPress={createOrder}>
+                <Text style={{color: 'white', fontWeight: 'bold'}}>CREATE ORDER</Text>
+              </Pressable>
+              {/* </View> */}
+            </ScrollView>
+          </BottomSheetView>
+        </BottomSheet>}
+    </GestureHandlerRootView>
     // </ScrollView>
   )
 }
@@ -65,6 +148,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // justifyContent: 'center',
     // marginTop: 50
+  },
+
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 20
   },
 
   foodList: {
@@ -112,5 +201,32 @@ const styles = StyleSheet.create({
   arrow: {
     fontWeight: '500',
     lineHeight: 45,
+  },
+
+  GooglePlacesSearch: {
+      // position: 'absolute',
+      justifyContent: 'center',
+      // alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'row',
+      marginTop: 10,
+      backgroundColor: '#fff',
+      // height: 55,
+      // height: 'auto',
+      width: '98%',
+      shadowColor: 'black',
+      shadowOffset: {
+          width: 2,
+          height: 2,
+      },
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 4,
+      padding: 5,
+      borderRadius: 5,
+  },
+  
+  input: {
+    // borderWidth: 1
   }
 });

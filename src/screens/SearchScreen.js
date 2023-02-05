@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, TextInput} from 'react-native'
 import { EvilIcons } from '@expo/vector-icons';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 
 import TopCategories from '../components/TopCategories'
 
@@ -78,3 +80,16 @@ const styles = StyleSheet.create({
     paddingRight: 25,
   }
 });
+
+
+{/* <GooglePlacesAutocomplete
+placeholder='Search'
+onPress={(data, details = null) => {
+  // 'details' is provided when fetchDetails = true
+  console.log(data, details);
+}}
+query={{
+  key: 'YOUR API KEY',
+  language: 'en',
+}}
+/> */}

@@ -42,7 +42,6 @@ const HomeStackNavigator = () => {
       <Stack.Screen  name="Restaurants" component={HomeScreen} options={{headerShown: true}}/>
       <Stack.Screen  name="RestaurantDetails" component={RestaurantDetailsScreen} options={{headerShown: false}}/>
       <Stack.Screen  name="Main Dish" component={MainDishDetails}/>
-      
       <Stack.Screen  name="Cart Details" component={OrderDetailsScreen}/>
       <Stack.Screen  name="Payment Options" component={CardListScreen}/>
       <Stack.Screen  name="Payment Confirmed" component={OrderConfirmationScreen}/>

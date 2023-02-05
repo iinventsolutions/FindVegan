@@ -36,14 +36,14 @@ export const BasketContexProvider = ({children}) => {
         }
      }
 
-    const createNewBasket = async () => { 
+    const createNewBasket = async () => {
         const newBasket = await DataStore.save(new Basket({
             userID: dbUser.id,
             restaurantID: basketrestaurant.id
         })).then((res)=>setBasket(res))
         setBasket(newBasket)
         return newBasket
-     }
+    }
 
     return(
         <BasketContex.Provider value={{addDishToBasket, setBasketRestaurant}}>

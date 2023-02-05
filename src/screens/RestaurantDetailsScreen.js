@@ -53,6 +53,8 @@ const RestaurantDetailsScreen = () => {
     navigation.goBack()
    }
 
+  //  This function handles the go back method when leaving the restaurant screen
+
   const handleLeaveDetailsScreen = () => {
     if(basket.length>0){
       Alert.alert(

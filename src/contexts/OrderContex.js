@@ -25,7 +25,7 @@ export const OrderContextProvider = ({children}) => {
         
     }, [dbUser])
     
-    console.log("Orders try: ", orders);
+    console.log("This is the order: ", orders)
     const createOrder = async () => { 
         
         // console.warn('Order created');
@@ -47,13 +47,15 @@ export const OrderContextProvider = ({children}) => {
                 Dish: BasketDish
         }))}))
 
+        // Spread content to the state on the orders page
         setOrders([...orders, newOrder])
 
         // dispatch({
         //     type: 'DELETE_ALL',
         //   })
     
-        navigation.goBack()
+        // navigation.goBack()
+        navigation.navigate("Payment Options")
      }
 
      const getOrder = async(id)=>{

@@ -19,7 +19,7 @@ const OrdersScreen = () => {
         {/* <YourOrderItem /> */}
         <FlatList 
                 // horizontal
-                data = {orders.reverse()}
+                data = {orders?.reverse()}
                 renderItem = {({item})=> <YourOrderItem order={item} />}
                 showsVerticalScrollIndicator = {false}
             />

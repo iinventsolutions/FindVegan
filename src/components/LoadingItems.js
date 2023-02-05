@@ -1,15 +1,19 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
-import { AntDesign, MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import React from 'react'
 
 const LoadingItems = ({title, sub}) => {
   return (
     <View style={styles.foodList}>
-        <View style={{width: 45, height: 45}}>
-            <Ionicons name="checkmark-sharp" size={28} color="green" />
-        </View>
+       {!title?
+          (<View style={{width: 45, height: 45}}>
+              <FontAwesome5 name="times" size={24} color="red" />
+          </View> )
+          :(<View style={{width: 45, height: 45}}>
+              <Ionicons name="checkmark-sharp" size={28} color="green" />
+          </View>)}
         <View style={{width: 200}}>
-          <Text style={{fontSize: 19, fontWeight: '500', color: '#4F4F4F'}}>{title}</Text>
+          <Text style={{fontSize: 19, fontWeight: '500', color: '#4F4F4F'}}>{title? title : 'Enter location'}</Text>
           <Text style={{color: '343F49', opacity: 0.5, fontSize: 15}}>{sub}</Text>
         </View>
         <View>

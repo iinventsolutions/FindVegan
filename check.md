@@ -37,3 +37,38 @@
     }
   ]
 }]
+
+
+Distance matrix API
+
+import axios from 'axios';
+
+const GOOGLE_DISTANCE_MATRIX_API_KEY = 'YOUR_API_KEY';
+
+async function getDistance(origin, destination) {
+  try {
+    const response = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
+      params: {
+        origins: origin,
+        destinations: destination,
+        key: GOOGLE_DISTANCE_MATRIX_API_KEY,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+
+const origin = 'Seattle, WA';
+const destination = 'San Francisco, CA';
+
+const distance = getDistance(origin, destination);
+
+
+this is how to get distance 
+*******************************
+console.log(data.geometry.location.lat, data.geometry.location.lng);
