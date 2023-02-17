@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect, useContext } from 'react'
 import { Auth, DataStore } from 'aws-amplify'
-import { User } from '../models'
+import { UserMobile } from '../models'
 
 export const AuthContext = createContext()
 
@@ -12,6 +12,7 @@ export function AuthContextProvider({children}){
     const sub = authUser?.attributes?.sub
 
     useEffect(() => {
+        // DataStore.clear();
       Auth.currentAuthenticatedUser({ bypassCache: true}).then((res)=>setAuthUser(res))
     }, [])
     
@@ -20,7 +21,7 @@ export function AuthContextProvider({children}){
 
 
     useEffect(() => {
-        DataStore.query(User, (user)=> user.sub('eq', sub)).then((users)=>setDbUser(users[0]))
+        DataStore.query(UserMobile, (user)=> user.sub.eq(sub)).then((users)=>setDbUser(users[0]))
     }, [sub])
     
 

@@ -14,7 +14,7 @@ const AllRestaurants = ({restaurant}) => {
     <Pressable onPress={goToRestaurantDetails} style={styles.container}>
         <View >
             <View style={styles.ImgWrapper}>
-                <Image source={{uri: restaurant.image}} style={styles.ImageContainer} />
+                <Image source={{uri: restaurant?.image}} style={styles.ImageContainer} />
                 <View style={styles.foodRating}>
                     <AntDesign name="star" size={16} color="yellow" />
                     <AntDesign name="star" size={16} color="yellow" />

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, ScrollView, FlatList, SafeAreaView} from 'react-
 import NearestRestaurants from '../components/NearestRestaurants';
 import TopRestaurants from '../components/TopRestaurants';
 import AllRestaurants from '../components/AllRestaurants';
-import { DataStore } from 'aws-amplify' 
+import { DataStore, Predicates } from 'aws-amplify' 
 import { Restaurant } from '../models/index'
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { useStateValue } from '../components/BasketContex/StateProvider';
@@ -17,10 +17,11 @@ const HomeScreen = () => {
 
     const fetchRestaurants = async () =>{
         try {
+            // await DataStore.delete(Restaurant, Predicates.ALL);
             const results = await DataStore.query(Restaurant);
             setRestaurant(results)
         } catch (error) {
-            console(error)
+            console.log("Loading restaurant error: ",error)
         }
         
     }

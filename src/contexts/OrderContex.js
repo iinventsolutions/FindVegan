@@ -21,31 +21,42 @@ export const OrderContextProvider = ({children}) => {
     const total = ((getBasketTotal(basket)+deliveryFee).toFixed(2))
     
     useEffect(() => {
-        DataStore.query(Order, o => o.userID('eq', dbUser.id)).then(res=>setOrders(res))
+        DataStore.query(Order, o => o.usermobileID.eq(dbUser?.id)).then(res=>setOrders(res))
         
-    }, [dbUser])
+    }, [dbUser?.id])
     
     console.log("This is the order: ", orders)
+    console.log("The user id is: ", dbUser?.id)
+    
     const createOrder = async () => { 
         
         // console.warn('Order created');
         // console.log("The new basket is: ", basketCopy);
+        // console.log("Order Log: ", dbUser.id, restaurantForOrder, parseFloat(total))
         const newOrder = await DataStore.save(new Order({
-            userID: dbUser.id,
+            usermobileID: dbUser?.id,
             Restaurant: restaurantForOrder,
             status: 'NEW',
             subtotal: parseFloat(total)
-        }));
+        }))
 
-        let dishQuantity;
         await Promise.all(basket.map(BasketDish => {
-            // dishQuantity = BasketDish.quantity
-            // delete BasketDish.quantity
-            DataStore.save(new OrderDish({
+            const {quantity, ...dishData } = BasketDish;
+            const orderDish = new OrderDish({
                 quantity: BasketDish.quantity,
                 orderID: newOrder.id,
-                Dish: BasketDish
-        }))}))
+                Dish: dishData
+            });
+
+            return DataStore.save(orderDish)
+        }))
+
+        // await Promise.all(basket.map(BasketDish => {
+        //     DataStore.save(new OrderDish({
+        //         quantity: BasketDish.quantity,
+        //         orderID: newOrder.id,
+        //         Dish: BasketDish
+        // }))}))
 
         // Spread content to the state on the orders page
         setOrders([...orders, newOrder])
@@ -55,15 +66,32 @@ export const OrderContextProvider = ({children}) => {
         //   })
     
         // navigation.goBack()
-        navigation.navigate("Payment Options")
+        // navigation.navigate("Payment Options")
      }
 
-     const getOrder = async(id)=>{
+    //  const getOrder = async(id)=>{
+    //     const order = await DataStore.query(Order, id);
+    //     const OrderDishes = await DataStore.query(OrderDish, (od)=> od.orderID.eq(id))
+
+    //     return {...order, dishes: OrderDishes}
+    //  }
+
+    async function getOrder(id) {
         const order = await DataStore.query(Order, id);
-        const OrderDishes = await DataStore.query(OrderDish, (od)=> od.orderID('eq', id))
-
-        return {...order, dishes: OrderDishes}
-     }
+        const orderDishes = await DataStore.query(OrderDish, od => od.orderID.eq(id), {
+          include: {
+            dish: true // include the "Dish" model in the result set
+          }
+        });
+      
+        // Iterate over each OrderDish object and wait for its "dish" property to resolve
+        const orderDishesWithDish = await Promise.all(orderDishes.map(async (od) => {
+          const dish = await od.Dish;
+          return { ...od, dish };
+        }));
+      
+        return { ...order, dishes: orderDishesWithDish };
+      }
 
      console.table("The orders aree:", restaurantForOrder);
 

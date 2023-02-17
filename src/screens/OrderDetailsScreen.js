@@ -44,9 +44,16 @@ const OrderDetailsScreen = () => {
   const route = useRoute();
   const df = route.params?.df //delivery fee
 
+  const googleMapApi = process.env.GOOGLE_MAP_API
+
   const checkOut = () => { 
     navigation.navigate("Payment Options")
    }
+
+   const handleCreateOrder = () => { 
+    // createOrder()
+    navigation.navigate("Payment Options", {df})
+    }
 
   return (
     // <ScrollView>
@@ -69,7 +76,7 @@ const OrderDetailsScreen = () => {
         </View>
         <View>
           <Text style={styles.subInfo}>GH¢{getBasketTotal(basket).toFixed(2)>0?((getBasketTotal(basket)).toFixed(2)):0}</Text>
-          <Text style={styles.subInfo}>GHS{df.toFixed(2)}</Text>
+          <Text style={styles.subInfo}>GHS{df?.toFixed(2)}</Text>
           <Text style={styles.subInfo}>GH¢{getBasketTotal(basket).toFixed(2)>0?((getBasketTotal(basket)+df).toFixed(2)):0}</Text>
           <MaterialIcons style={styles.arrow} name="keyboard-arrow-right" size={24} color="black" />
         </View>
@@ -99,7 +106,7 @@ const OrderDetailsScreen = () => {
                     // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
                     // currentLocationLabel="Current location"
                     fetchDetails={true}
-                    nearbyPlacesAPI={true}
+                    nearbyPlacesAPI= "true"
                     enablePoweredByContainer={false}
                     styles={{textInput: styles.input}}
                     getCurrentLocation
@@ -126,7 +133,7 @@ const OrderDetailsScreen = () => {
                 <LoadingItems title={'Standard delivery: 10-20 min'} sub={''}/>
                 <LoadingItems title={''} sub={'My order,Derek'}/>
               </View>
-              <Pressable style={[styles.button, {margin: 30}]} onPress={createOrder}>
+              <Pressable style={[styles.button, {margin: 30}]} onPress={handleCreateOrder}>
                 <Text style={{color: 'white', fontWeight: 'bold'}}>CREATE ORDER</Text>
               </Pressable>
               {/* </View> */}

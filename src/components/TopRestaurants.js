@@ -9,20 +9,20 @@ const TopRestaurants = ({restaurant}) => {
     const navigation = useNavigation();
 
     const goToRestaurantDetails = () => { 
-        navigation.navigate("RestaurantDetails", {id: restaurant.id})
+        navigation.navigate("RestaurantDetails", {id: restaurant?.id})
      }
 
   return (
     <Pressable onPress={goToRestaurantDetails} style={styles.container}>
         
         <View style={styles.ImgWrapper}>
-            <Image source={{uri: restaurant.image.startsWith('http')? restaurant?.image : DEFAULT_IMAGE}} style={styles.ImageContainer} />
+            <Image source={{uri: restaurant?.image?.startsWith('http')? restaurant?.image : DEFAULT_IMAGE}} style={styles.ImageContainer} />
             <View style={styles.foodRating}>
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
                 <Ionicons name="star-sharp" size={18} color="yellow" />
-                <Text style={{color: '#fff'}}>({restaurant?.rating.toFixed(1)})</Text>
+                <Text style={{color: '#fff'}}>({restaurant?.rating?.toFixed(1)})</Text>
             </View>
         </View>
         <View style={styles.foodDetails}>

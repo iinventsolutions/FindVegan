@@ -14,8 +14,8 @@ export const BasketContexProvider = ({children}) => {
 
     
     useEffect(() => {
-        DataStore.query(Basket, (b)=> b.restaurantID('eq', basketrestaurant?.id).userID('eq', dbUser?.id)).then((baskets)=>setBasket(baskets[0]));
-        // DataStore.query(Basket, (b)=> b.and(b => [b.restaurantID('eq', basketrestaurant?.id), b.userID('eq', dbUser)])).then((baskets)=>setBasket(baskets[0]));
+        DataStore.query(Basket, (b)=> b.restaurantID.eq(basketrestaurant?.id).usermobileID.eq(dbUser?.id)).then((baskets)=>setBasket(baskets[0]));
+        // DataStore.query(Basket, (b)=> b.and(b => [b.restaurantID('eq', basketrestaurant?.id), b.usermobileID('eq', dbUser)])).then((baskets)=>setBasket(baskets[0]));
         console.log("The restaurant basket is: ",basket)
 
         // console.log("The restaurant basket is: ",basketrestaurant);
@@ -38,7 +38,7 @@ export const BasketContexProvider = ({children}) => {
 
     const createNewBasket = async () => {
         const newBasket = await DataStore.save(new Basket({
-            userID: dbUser.id,
+            usermobileID: dbUser.id,
             restaurantID: basketrestaurant.id
         })).then((res)=>setBasket(res))
         setBasket(newBasket)

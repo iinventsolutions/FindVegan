@@ -35,8 +35,8 @@ const CartScreen = ({navigation}) => {
       </View>
       {order.dishes.reverse()?.map(basketinfo=>(<View key={basketinfo.id} style={styles.foodList}>
         <View style={{width: 25, height: 25, borderWidth: 1, borderRadius: 6, borderColor: '#419D47', justifyContent: 'center', alignItems: 'center'}}><Text style={{color: '#419D47', fontWeight: 'bold'}}>{basketinfo.quantity}</Text></View>
-        <View><Text style={{fontSize: 19, fontWeight: 'bold', color: '#4F4F4F'}}>{basketinfo.Dish.name}</Text></View>
-        <View><Text style={{color: '#419D47', fontWeight: 'bold', fontSize: 16}}>GH¢{basketinfo.Dish.price}</Text></View>
+        <View><Text style={{fontSize: 19, fontWeight: 'bold', color: '#4F4F4F'}}>{basketinfo?.dish?.name}</Text></View>
+        <View><Text style={{color: '#419D47', fontWeight: 'bold', fontSize: 16}}>GH¢{basketinfo?.dish?.price}</Text></View>
       </View>))}
 
       {/* <Pressable style={styles.button} onPress={checkOut}>

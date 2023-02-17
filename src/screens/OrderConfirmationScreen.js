@@ -5,12 +5,24 @@ import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LoadingItems from '../components/LoadingItems';
+import { useOrderContext } from '../contexts/OrderContex';
+import  { Paystack }  from 'react-native-paystack-webview';
+import { getBasketTotal } from '../components/BasketContex/reducer';
+import { useStateValue } from '../components/BasketContex/StateProvider';
+import { useRoute } from '@react-navigation/native';
 
 
 const OrderConfirmationScreen = ({navigation}) => {
 
+  const { createOrder } = useOrderContext()
+
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isOpen, setIsOpen] = useState(true)
+  const [{basket}, dispatch] = useStateValue();
+
+  const route = useRoute();
+  const df = route.params?.df
 
   // variables
   const snapPoints = useMemo(() => ["75%"], []);
@@ -26,6 +38,29 @@ const OrderConfirmationScreen = ({navigation}) => {
 
   return (
     <GestureHandlerRootView style={[styles.container, {backgroundColor: isOpen? 'grey': '#fff'}]}>
+      <Paystack  
+        paystackKey="pk_test_f38f4ed39ec5301f0cc6784799288b023132b805"
+        amount={(getBasketTotal(basket)+df).toFixed(2)}
+        currency={'GHS'}
+        channels={["card", "bank", "mobile_money"]}
+        billingEmail="paystackwebview@something.com"
+        activityIndicatorColor="green"
+        onCancel={(e) => {
+          // handle response here
+            console.log(e);
+            navigation.goBack()
+        }}
+        onSuccess={(res) => {
+          // handle response here
+          console.log(res);
+          createOrder();
+        }}
+        onError={(e) => { 
+            // handle response here
+            console.log(e);
+        }}
+        autoStart={true}
+      />
         <Image
             source={require('../../assets/done.png')}
             style={{ width: 60, height: 60, }}

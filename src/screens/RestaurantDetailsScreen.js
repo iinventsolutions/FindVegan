@@ -40,7 +40,7 @@ const RestaurantDetailsScreen = () => {
   }
 
   const fetchDish = async () =>{
-    const result = await DataStore.query(Dish, (dish)=> dish.restaurantID("eq", id))
+    const result = await DataStore.query(Dish, (dish)=> dish.restaurantID.eq(id))
     console.log("Dishes data: ",result)
     setDishes(result)
   }
@@ -122,7 +122,7 @@ const RestaurantDetailsScreen = () => {
 
         <View>
               <Image
-                  source={{uri: restaurant.image}}
+                  source={{uri: restaurant?.image}}
                   style={{ width: "100%", height: 310, }}
                   // resizeMode="cover"
               />
@@ -137,7 +137,7 @@ const RestaurantDetailsScreen = () => {
 
         <View style={styles.restaurantName}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-            <Text style={{fontSize: 22, fontWeight: 'bold'}}>{restaurant.name}</Text>
+            <Text style={{fontSize: 22, fontWeight: 'bold'}}>{restaurant?.name}</Text>
             <View style={{display: 'flex', flexDirection: 'row', width: 150, justifyContent: 'space-between'}}>
               <Text>{restaurant.rating}</Text>
               <Ionicons name="star-sharp" size={18} color="#419D47" />
@@ -149,8 +149,8 @@ const RestaurantDetailsScreen = () => {
           <View style={{height: 65, width: '50%', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row'}}>
           <MaterialIcons name="delivery-dining" size={24} color="grey" />
           <View>
-            <Text style={styles.deliveryTime}>Delivery at GHS{restaurant.deliveryFee.toFixed(2)}</Text>
-            <Text style={[styles.deliveryTime, {fontSize: 14}]}>{restaurant.minDeliveryTime}min-{restaurant.maxDeliveryTime}min</Text>
+            <Text style={styles.deliveryTime}>Delivery at GHS{restaurant?.deliveryFee?.toFixed(2)}</Text>
+            <Text style={[styles.deliveryTime, {fontSize: 14}]}>{restaurant?.minDeliveryTime}min-{restaurant?.maxDeliveryTime}min</Text>
           </View>
           
           </View>

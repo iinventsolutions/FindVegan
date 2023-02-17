@@ -1,13 +1,25 @@
-import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
+import React, { useRef } from 'react';
+import {View, Text, StyleSheet, Image, ScrollView, Pressable, TouchableOpacity} from 'react-native'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useOrderContext } from '../contexts/OrderContex';
+import { useRoute } from '@react-navigation/native';
+// import  { Paystack , paystackProps}  from 'react-native-paystack-webview';
+
 
 const PaymentItem = () => {
 
-    const navigation = useNavigation();
+  // const paystackWebViewRef = useRef<paystackProps.PayStackRef>(null); 
 
-    const checkOut = () => { 
-        navigation.navigate("Payment Confirmed")
+
+    const navigation = useNavigation();
+    const route = useRoute();
+    const df = route.params?.df
+
+
+    const checkOut = async () => { 
+      
+      navigation.navigate("Payment Confirmed", {df})
     }
 
   return (

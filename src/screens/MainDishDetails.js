@@ -76,7 +76,6 @@ const MainDishDetails = () => {
               quantity: itemNum,
               image: dish?.image,
               restaurantID: dish?.restaurantID
-
         }
       })
 
