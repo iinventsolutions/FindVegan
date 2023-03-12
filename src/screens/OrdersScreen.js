@@ -5,9 +5,10 @@ import { useOrderContext } from '../contexts/OrderContex';
 
 const OrdersScreen = () => {
 
-  const { orders } = useOrderContext()
+  const { orders, setOrders } = useOrderContext()
 
   // orders.reverse()
+  console.log("My Res: ", orders)
 
   return (
     // <ScrollView style>

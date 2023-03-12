@@ -72,3 +72,37 @@ const distance = getDistance(origin, destination);
 this is how to get distance 
 *******************************
 console.log(data.geometry.location.lat, data.geometry.location.lng);
+
+
+
+How to use expo location to get current location 
+*************************************************
+expo install expo-location
+
+import * as Location from 'expo-location';
+
+<!-- Create a state variable to hold the user's location: -->
+const [location, setLocation] = useState(null);
+
+
+<!-- Use the useEffect hook to request permission to access the user's location when the component mounts: -->
+useEffect(() => {
+  getLocation();
+}, []);
+
+const getLocation = async () => {
+  let { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission to access location was denied');
+    return;
+  }
+
+  let location = await Location.getCurrentPositionAsync({});
+  setLocation(location);
+};
+
+
+<!-- The getCurrentPositionAsync function returns an object with the user's location, including latitude and longitude. You can access these values by using the location.coords.latitude and location.coords.longitude properties: -->
+<Text>Latitude: {location.coords.latitude}</Text>
+<Text>Longitude: {location.coords.longitude}</Text>
+

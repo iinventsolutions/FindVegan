@@ -1,53 +1,7 @@
-type Order @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  status: OrderStatus
-  OrderDishes: [OrderDish] @hasMany(indexName: "byOrder", fields: ["id"])
-  Restaurant: Restaurant @hasOne
-  usermobileID: ID! @index(name: "byUserMobile")
-  subtotal: Float
-}
-
-type Dish @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String!
-  image: String
-  description: String
-  price: Float
-  restaurantID: ID! @index(name: "byRestaurant")
-}
-
 enum PlanSubscription {
+  FREE
   BASIC
   PREMIUM
-  SUPER
-}
-
-type RestaurantOwner @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  firstname: String!
-  lastname: String!
-  email: String!
-  phone: String
-  address: String
-  dob: AWSDate
-  planstatus: PlanSubscription
-}
-
-type UserMobile @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String!
-  address: String!
-  lat: Float!
-  lng: Float!
-  sub: String!
-  Orders: [Order] @hasMany(indexName: "byUserMobile", fields: ["id"])
-}
-
-type OrderDish @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  quantity: Int
-  Dish: Dish @hasOne
-  orderID: ID! @index(name: "byOrder")
 }
 
 enum OrderStatus {
@@ -60,20 +14,68 @@ enum OrderStatus {
   RESTAURANT_DECLINED
 }
 
+type OrderDish @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  quantity: Int
+  orderID: ID! @index(name: "byOrder")
+  Dish: Dish @hasOne
+}
+
+type UserMobile @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  address: String
+  lat: Float
+  lng: Float
+  sub: String
+  phone: String
+  Orders: [Order] @hasMany(indexName: "byUserMobile", fields: ["id"])
+}
+
+type RestaurantOwner @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  fullname: String!
+  username: String!
+  email: String!
+  phone: String
+  address: String
+  dob: AWSDate
+  planstatus: PlanSubscription
+  sub: String
+}
+
+type Order @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  status: OrderStatus
+  subtotal: Float
+  OrderDish: [OrderDish] @hasMany(indexName: "byOrder", fields: ["id"])
+  Restaurant: Restaurant @hasOne
+  usermobileID: ID! @index(name: "byUserMobile")
+}
+
+type Dish @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  image: String
+  description: String
+  price: Float
+  restaurantID: ID! @index(name: "byRestaurant")
+}
+
 type Restaurant @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   image: String
   deliveryFee: Float
-  minDelivery: Int
   maxDelivery: Int
-  address: String
+  minDelivery: Int
   lat: Float!
   lng: Float!
   sub: String
   openingTime: String
   closingTime: String
-  phone: String
+  address: String
   Dishes: [Dish] @hasMany(indexName: "byRestaurant", fields: ["id"])
+  phone: String
 }
  

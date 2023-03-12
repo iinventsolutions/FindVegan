@@ -20,6 +20,7 @@ const HomeScreen = () => {
             // await DataStore.delete(Restaurant, Predicates.ALL);
             const results = await DataStore.query(Restaurant);
             setRestaurant(results)
+            console.log("List of restaurants: ", results)
         } catch (error) {
             console.log("Loading restaurant error: ",error)
         }

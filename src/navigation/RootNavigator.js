@@ -1,5 +1,8 @@
+import React, {useState, useEffect} from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// Screens import
 import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -15,12 +18,26 @@ import ProfileInfoScreen from '../screens/ProfileInfoScreen';
 import ReferToFriendsScreen from '../screens/ReferToFriendsScreen';
 import AddSocialScreen from '../screens/AddSocialScreen';
 import OrderPlacingScreen from '../screens/OrderPlacingScreen';
+import OnboardingScreen from '../screens/OnboardingScreen';
 
+// Authentication screens starts here
+import SignInScreen from '../screens/Auth/SignInScreen';
+import SignUpScreen from '../screens/Auth/SignUpScreen';
+import ConfirmEmailScreen from '../screens/Auth/ConfirmEmailScreen';
+import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
+import NewPasswordScreen from '../screens/Auth/NewPasswordScreen';
+// Authentication screens ends here
+
+// Expo icons
 import { Entypo } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
-import { View, Text } from 'react-native';
+// React native imports
+import { View, Text, ActivityIndicator } from 'react-native';
+import { useAuthContext } from '../contexts/AuthContext';
+import { Auth, Hub } from 'aws-amplify';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 const HomeStack = createNativeStackNavigator();
@@ -28,10 +45,88 @@ const ProfileStack = createNativeStackNavigator();
 const OrderStack = createNativeStackNavigator();
 
 const RootNavigator = () => {
+
+  const { user } = useAuthContext();
+
+  // const [user, setUser] = useState(undefined)
+
+  // const checkUser = async() => { 
+  //   try {
+  //     const authUser = await Auth.currentAuthenticatedUser({ bypassCache: true})
+  //     setUser(authUser)
+  //     console.log(user)
+  //   } catch (error) {
+  //     setUser(null)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   checkUser();
+  // }, [])
+
+  // useEffect(() => {
+  //   const listener = (data) =>{ 
+  //     if(data.payload.event === 'signIn' || data.payload.event === 'signOut'){
+  //       checkUser();
+  //     }
+  //   }
+
+  //   const subscription = Hub.listen('auth', listener);
+  //   return () => subscription.unsubscribe();
+  // }, [])
+
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const clearAsyncStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error('Error clearing AsyncStorage: ', error.message);
+    }
+  };
+
+  // useEffect(() => {
+  //   clearAsyncStorage()
+  // }, [])
+  
+
+  useEffect(() => {
+    async function checkOnboarding() {
+      const onboardingShown = await AsyncStorage.getItem('onboardingShown');
+      setShowOnboarding(!onboardingShown);
+    }
+    checkOnboarding();
+  }, []);
+  
+
+  if(user === undefined){ 
+    return(
+      <View style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator  size={'large'} color='grey'/>
+      </View>
+    )
+  }
+  
+
   return (
     <Stack.Navigator>
-      <Stack.Screen  name="HomeList" component={HomeTabs} options={{headerShown: false}}/>
-      {/* <Stack.Screen  name="RestaurantDetails" component={RestaurantDetailsScreen} options={{headerShown: false}}/> */}
+      {!user ?   
+       ( 
+        <>
+          <Stack.Screen name="SignIn" component={SignInScreen} options={{headerShown: false}}/>
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+        </>
+       ):
+        (
+        <>
+          {showOnboarding && <Stack.Screen  name="Onboard" component={OnboardingScreen} options={{headerShown: false}}/>}
+          <Stack.Screen  name="HomeList" component={HomeTabs} options={{headerShown: false}}/>
+        </>
+        )
+      }
     </Stack.Navigator>
   )
 }

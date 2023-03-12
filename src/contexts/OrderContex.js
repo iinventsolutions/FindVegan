@@ -20,13 +20,26 @@ export const OrderContextProvider = ({children}) => {
     const deliveryFee = restaurantForOrder?.deliveryFee
     const total = ((getBasketTotal(basket)+deliveryFee).toFixed(2))
     
-    useEffect(() => {
-        DataStore.query(Order, o => o.usermobileID.eq(dbUser?.id)).then(res=>setOrders(res))
+    // useEffect(() => {
+    //     DataStore.query(Order, o => o.usermobileID.eq(dbUser?.id)).then(res=>setOrders(res))
         
-    }, [dbUser?.id])
+    // }, [dbUser?.id])
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+          const orders = await DataStore.query(Order, o => o.usermobileID.eq(dbUser?.id));
+          const ordersWithRestaurant = await Promise.all(orders.map(async order => {
+            const restaurant = await order.Restaurant;
+            return { ...order, Restaurant: restaurant };
+          }));
+          setOrders(ordersWithRestaurant);
+        };
+        fetchOrders();
+      }, [dbUser?.id]);
     
     console.log("This is the order: ", orders)
     console.log("The user id is: ", dbUser?.id)
+    console.log("My restaurant: ", restaurantForOrder)
     
     const createOrder = async () => { 
         
@@ -51,6 +64,9 @@ export const OrderContextProvider = ({children}) => {
             return DataStore.save(orderDish)
         }))
 
+        const restaurant = await newOrder.Restaurant;
+        const orderWithRestaurant = { ...newOrder, Restaurant: restaurant };
+
         // await Promise.all(basket.map(BasketDish => {
         //     DataStore.save(new OrderDish({
         //         quantity: BasketDish.quantity,
@@ -59,7 +75,8 @@ export const OrderContextProvider = ({children}) => {
         // }))}))
 
         // Spread content to the state on the orders page
-        setOrders([...orders, newOrder])
+        // setOrders([...orders, newOrder])
+        setOrders([...orders, orderWithRestaurant]);
 
         // dispatch({
         //     type: 'DELETE_ALL',
@@ -78,6 +95,7 @@ export const OrderContextProvider = ({children}) => {
 
     async function getOrder(id) {
         const order = await DataStore.query(Order, id);
+
         const orderDishes = await DataStore.query(OrderDish, od => od.orderID.eq(id), {
           include: {
             dish: true // include the "Dish" model in the result set
@@ -89,14 +107,16 @@ export const OrderContextProvider = ({children}) => {
           const dish = await od.Dish;
           return { ...od, dish };
         }));
+
       
-        return { ...order, dishes: orderDishesWithDish };
+        return { ...order, dishes: orderDishesWithDish, restaurant: await order.Restaurant };
+        // console.log("hey, ", ...order, orderDishesWithDish, orderWithRestaurant)
       }
 
      console.table("The orders aree:", restaurantForOrder);
 
     return(
-        <OrderContext.Provider value={{createOrder, setRestaurantForOrder, orders, getOrder}}>
+        <OrderContext.Provider value={{createOrder, setRestaurantForOrder, orders, getOrder, setOrders}}>
             {children}
         </OrderContext.Provider>
     )

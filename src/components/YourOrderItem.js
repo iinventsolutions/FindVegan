@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const YourOrderItem = ({order}) => {
 
+  // console.log("Hey hey hey: ", order)
+
   const navigation = useNavigation();
 
   return (

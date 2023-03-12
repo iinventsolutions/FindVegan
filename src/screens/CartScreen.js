@@ -27,6 +27,7 @@ const CartScreen = ({navigation}) => {
   }
   
   console.log("The order dishes are: ",order.dishes);
+  console.log("Hey hey hey: ", order.restaurant)
 
   return (
     <View style={styles.container}>

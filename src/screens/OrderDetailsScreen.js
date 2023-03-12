@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useEffect, Alert } from 'react';
 import {View, Text, StyleSheet, Image, Pressable, FlatList, ActivityIndicator} from 'react-native'
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { container, input } from 'aws-amplify';
@@ -15,6 +15,8 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import LoadingItems from '../components/LoadingItems';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
+
 
 // Google Autocomplete imports
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -27,6 +29,8 @@ const OrderDetailsScreen = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isOpen, setIsOpen] = useState(false)
   const [googlePlaceName, setGooglePlaceName] = useState(null)
+  const [location, setLocation] = useState(null); //Expo-location state
+
 
   // variables
   const snapPoints = useMemo(() => ["75%"], []);
@@ -37,7 +41,7 @@ const OrderDetailsScreen = () => {
   }, []);
   // BottomSheet end
 
-  const { createOrder } = useOrderContext()
+  // const { createOrder } = useOrderContext()
 
   const navigation = useNavigation();
   const [{basket}, dispatch] = useStateValue();
@@ -54,6 +58,32 @@ const OrderDetailsScreen = () => {
     // createOrder()
     navigation.navigate("Payment Options", {df})
     }
+
+  // Expo Geo-Location Starts here
+  
+  const getLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission to access location was denied');
+      return;
+    }
+  
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    // console.log("Location details: ",location)
+    if(location){
+      console.warn("lat: ",location?.coords?.latitude, "lng: ", location?.coords?.longitude)
+    }else{
+      console.warn("Error getting location...")
+    }
+  };
+  
+  useEffect(() => {
+    // getLocation();
+  }, []);
+
+
+  // Expo Geo-Location Ends here
 
   return (
     // <ScrollView>
@@ -95,36 +125,48 @@ const OrderDetailsScreen = () => {
         >
           <BottomSheetView style={styles.contentContainer}>
           <View style={{width: '90%',flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 24, fontWeight: 'bold'}}>Checkout</Text>
-                <ActivityIndicator size={28} color='#419D47'/>
-              </View>
-              <View style={{width: '100%', display: 'flex', alignItems: 'center', position: 'relative'}}>
-                <View style={styles.GooglePlacesSearch}>
-                <Ionicons name="location-sharp" size={18} style={{opacity: 0.5, marginTop: 13}} color="black" />
-                  <GooglePlacesAutocomplete
-                    placeholder='Enter Location'
-                    // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-                    // currentLocationLabel="Current location"
-                    fetchDetails={true}
-                    nearbyPlacesAPI= "true"
-                    enablePoweredByContainer={false}
-                    styles={{textInput: styles.input}}
-                    getCurrentLocation
-                    onPress={(data, details = null) => {
-                      // 'details' is provided when fetchDetails = true
-                      console.log("Map data is: ",data);
-                      setGooglePlaceName(data.description)
-                    }}
-                    onFail={(error) => console.error("Map error is: ",error)}
-                    query={{
-                      key: 'AIzaSyB-LKht_lArgYnXm8ofVkCzPLZ0BlXwLnU',
-                      language: 'en',
-                      components: 'country:gh'
-                    }}
-                    
-                  />
-                </View>
-              </View>
+            <Text style={{fontSize: 24, fontWeight: 'bold'}}>Checkout</Text>
+            <ActivityIndicator size={28} color='#419D47'/>
+          </View>
+
+          {/* <View>
+            <Text>Latitude: {location?.coords?.latitude}</Text>
+            <Text>Longitude: {location?.coords?.longitude}</Text>
+          </View> */}
+
+          {/* Google Places autocomplete starts here */}
+          <View style={{width: '100%', display: 'flex', alignItems: 'center', position: 'relative'}}>
+            <View style={styles.GooglePlacesSearch}>
+            <Ionicons name="location-sharp" size={18} style={{opacity: 0.5, marginTop: 13}} color="black" />
+              <GooglePlacesAutocomplete
+                placeholder='Enter Location'
+                // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+                // currentLocationLabel="Current location"
+                fetchDetails={true}
+                nearbyPlacesAPI= "true"
+                enablePoweredByContainer={false}
+                styles={{textInput: styles.input}}
+                getCurrentLocation
+                onPress={(data, details = null) => {
+                  // 'details' is provided when fetchDetails = true
+                  console.log("Map data is: ",data);
+                  setGooglePlaceName(data.description)
+                }}
+                onFail={(error) => console.error("Map error is: ",error)}
+                query={{
+                  key: 'AIzaSyB-LKht_lArgYnXm8ofVkCzPLZ0BlXwLnU',
+                  language: 'en',
+                  components: 'country:gh'
+                }}
+                
+              />
+            </View>
+          </View>
+          {/* Google Places autocomplete ends here */}
+          <View style={{display: 'flex', width: '100%', marginTop: 10}}>
+            <Text style={{fontWeight: '500', color: 'gray'}} onPress={getLocation}>Select Current Location</Text>
+          </View>
+
               <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
               {/* <View style={{ alignItems: 'center' }}> */}
  
