@@ -15,6 +15,7 @@ export function AuthContextProvider({children}){
     useEffect(() => {
         // DataStore.clear();
       Auth.currentAuthenticatedUser({ bypassCache: true}).then((res)=>setAuthUser(res))
+      // user.signInUserSession.accessToken.payload["cognito:groups"]
     }, [])
 
 

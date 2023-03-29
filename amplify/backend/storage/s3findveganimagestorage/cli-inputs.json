@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3findveganimagestorage",
+  "bucketName": "findvegan-image-storage",
+  "policyUUID": "ef7943b7",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ]
+}

@@ -6,6 +6,7 @@ import { UserMobile } from '../models'
 import { useAuthContext } from '../contexts/AuthContext';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Avatar } from '@rneui/themed';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 const ProfileInfoScreen = () => {
@@ -118,7 +119,7 @@ const ProfileInfoScreen = () => {
                 }}
                 onFail={(error) => console.error("Map error is: ",error)}
                 query={{
-                  key: 'AIzaSyB-LKht_lArgYnXm8ofVkCzPLZ0BlXwLnU',
+                  key: process.env.GOOGLE_API_KEY,
                   language: 'en',
                   components: 'country:gh'
                 }}

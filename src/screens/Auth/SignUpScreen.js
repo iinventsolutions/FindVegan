@@ -30,19 +30,25 @@ const SignUpScreen = () => {
     // navigation.navigate('ConfirmEmail', {userEmail: data.email});
     const {name, username, email, password, phone} = data
     try {
-      const {userSub} = await Auth.signUp({
+      const registeringUser = await Auth.signUp({
         username: email,
         password,
         attributes: {
           email,
           phone_number: phone,
           name,
-          preferred_username: username
+          preferred_username: username,
         },
         autoSignIn: { // optional - enables auto sign in after user is confirmed
           enabled: true,
         }
       })
+
+      // await Auth.updateUserAttributes(registeringUser, {
+      //   'custom:favorite_ice_cream': 'vanilla'
+      // });
+
+      const {userSub} = registeringUser
       const user = await DataStore.save(new UserMobile({
         sub: userSub,
         phone: phone,
@@ -142,7 +148,7 @@ const SignUpScreen = () => {
           }}
         />
 
-        <CustomButton bgColor='#419D47' text={loading?"Registering user":"Register"} onPress={handleSubmit(onRegisterPressed)} />
+        <CustomButton bgColor='#419D47' text={loading?"Registering user...":"Register"} onPress={handleSubmit(onRegisterPressed)} />
 
         <Text style={styles.text}>
           By registering, you confirm that you accept our{' '}

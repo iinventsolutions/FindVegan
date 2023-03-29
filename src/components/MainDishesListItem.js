@@ -1,13 +1,33 @@
+import React, {useState, useEffect} from 'react'
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import { Storage } from 'aws-amplify'
 
 const MainDishesListItem = ({dish, restaurantid}) => {
+
+  const DEFAULT_IMAGE_LINK = 'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/10/4/1/FN_chain-restaurant-entrees_Applebees_Bourbon-Street-Chicken-Shrimp_s6x4.jpg.rend.hgtvcom.616.411.suffix/1538685780055.jpeg'
+
+  const [imageLink, setImageLink] = useState(null)
   
   const navigation = useNavigation();
 
   const DishMenu = (dishId) => { 
     navigation.navigate("Main Dish", {id: dishId, resId: restaurantid})
    }
+
+  const getImage = async() => {  
+  const file = await Storage.get(dish?.image, {
+    level: "public"
+  });
+  // console.log("the image: ",file)
+  setImageLink(file)
+}
+
+useEffect(() => {
+  if(dish?.image){
+    getImage()
+  }
+}, [])
 
   return (
     <>
@@ -19,7 +39,7 @@ const MainDishesListItem = ({dish, restaurantid}) => {
         </View>
         <View style={{width: '30%'}}>
         <Image
-            source={{uri: dish.image}}
+            source={{uri: imageLink ? imageLink : DEFAULT_IMAGE_LINK}}
             style={{ width: '100%', height: '80%', borderRadius: 7}}
             />
         </View>

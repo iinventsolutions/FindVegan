@@ -5,7 +5,7 @@ import CircularButton from '../components/CircularButton'
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { Dish } from '../models';
-import { DataStore } from 'aws-amplify'
+import { DataStore, Storage } from 'aws-amplify'
 import { useStateValue } from '../components/BasketContex/StateProvider';
 
 import {MaterialIcons, AntDesign, Entypo} from '@expo/vector-icons';
@@ -16,8 +16,11 @@ const MainDishDetails = () => {
 
     const index = useNavigationState(state => state.index);
 
+    const DEFAULT_IMAGE_LINK = 'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2018/10/4/1/FN_chain-restaurant-entrees_Applebees_Bourbon-Street-Chicken-Shrimp_s6x4.jpg.rend.hgtvcom.616.411.suffix/1538685780055.jpeg'
+
     const navigation = useNavigation();
     const [{basket}, dispatch] = useStateValue()
+    const [imageLink, setImageLink] = useState(null)
     // const { addDishToBasket} = useBasketContext()
 
     const route = useRoute()
@@ -82,19 +85,35 @@ const MainDishDetails = () => {
       navigation.goBack()      
    };
 
+    const getImage = async() => {  
+      const file = await Storage.get(dish?.image, {
+      level: "public"
+    });
+    // console.log("the image: ",file)
+    setImageLink(file)
+  }
+
     useEffect(() => {
       if(id){
         fetchADish()
       }
       console.log("The navigation state: ", index);
     }, [id])
+
+    useEffect(() => {
+      if(dish?.image){
+        getImage()
+      }
+    }, [])
+
+    console.log(imageLink)
     
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Image
-            source={{uri: dish?.image}}
+            source={{uri: imageLink}}
             style={{ width: "100%", height: 310, }}
             // resizeMode="cover"
         />

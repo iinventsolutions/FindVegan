@@ -16,7 +16,7 @@ import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler
 import LoadingItems from '../components/LoadingItems';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-
+import { GOOGLE_MAP_API } from '../Utils/Constants';
 
 // Google Autocomplete imports
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -154,7 +154,7 @@ const OrderDetailsScreen = () => {
                 }}
                 onFail={(error) => console.error("Map error is: ",error)}
                 query={{
-                  key: 'AIzaSyB-LKht_lArgYnXm8ofVkCzPLZ0BlXwLnU',
+                  key: process.env.GOOGLE_API_KEY,
                   language: 'en',
                   components: 'country:gh'
                 }}

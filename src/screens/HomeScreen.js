@@ -7,12 +7,20 @@ import { DataStore, Predicates } from 'aws-amplify'
 import { Restaurant } from '../models/index'
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { useStateValue } from '../components/BasketContex/StateProvider';
+import { UserMobile } from '../models/index';
+import * as Location from 'expo-location';
+import { useAuthContext } from '../contexts/AuthContext';
+
+
 
 const HomeScreen = () => {
 
     const index = useNavigationState(state => state.index);
 
+    const { dbUser } = useAuthContext();
+
     const [restaurant, setRestaurant] = useState([])
+    const [locationdata, setLocationData] = useState(null); 
     const [{ basket }, dispatch] = useStateValue()
 
     const fetchRestaurants = async () =>{
@@ -26,13 +34,55 @@ const HomeScreen = () => {
         }
         
     }
+
+    const updateUser = async () => { 
+        await DataStore.save(
+          UserMobile.copyOf(dbUser, updated => {
+            updated.lat = parseFloat(locationdata?.coords?.latitude);
+            updated.lng = parseFloat(locationdata?.coords?.longitude);
+          })
+        )
+     }
+
+    const getLocation = async () => {
+        try {
+
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+            Alert.alert('Permission to access location was denied');
+            return;
+            }
+        
+            let location = await Location.getCurrentPositionAsync({});
+            setLocationData(location);
+            // console.log("Location details: ",location)
+            if(location){
+                console.warn("lat: ",location?.coords?.latitude, "lng: ", location?.coords?.longitude)
+            }else{
+                console.warn("Error getting location...")
+            }
+
+            // After getting user's info update the user info with the table
+            updateUser()
+            
+        } catch (error) {
+            Alert.alert(error)
+        }
+        
+      };
     
 
 
     useEffect(() => {
         fetchRestaurants()
+
         console.log("Home Stack state: ", index);
     }, [])
+
+    useEffect(() => {
+        // getLocation()
+    }, [dbUser])
+    
     
 
   return (

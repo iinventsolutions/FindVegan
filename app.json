@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "findvegan",
+    "name": "Find Vegan",
     "slug": "findvegan",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.findvegan"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,6 +29,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "83d45786-3dd4-40b4-baf9-d4916a804a61"
+      }
     }
   }
 }
