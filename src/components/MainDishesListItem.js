@@ -12,11 +12,11 @@ const MainDishesListItem = ({dish, restaurantid}) => {
   const navigation = useNavigation();
 
   const DishMenu = (dishId) => { 
-    navigation.navigate("Main Dish", {id: dishId, resId: restaurantid})
+    navigation.navigate("Main Dish", {id: dishId, resId: restaurantid, imageLink: imageLink})
    }
 
   const getImage = async() => {  
-  const file = await Storage.get(dish?.image, {
+  const file = await Storage.get(`DishImages/${dish?.image}`, {
     level: "public"
   });
   // console.log("the image: ",file)
@@ -35,7 +35,7 @@ useEffect(() => {
         <View style={{width: '65%'}}>
             <Text style={{fontWeight: 'bold', lineHeight: 30}}>{dish.name}</Text>
             <Text style={{color: 'gray', lineHeight: 30}} numberOfLines={1}>{dish.description}</Text>
-            <View style={{height: 25, width: 90, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: '#63D17F', marginTop: 5}}><Text style={{fontWeight: 'bold', color: '#fff'}}>GHS {dish.price}</Text></View>
+            <View style={{height: 25, width: 90, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: '#63D17F', marginTop: 5}}><Text style={{fontWeight: 'bold', color: '#fff'}}>GHS {dish?.price}</Text></View>
         </View>
         <View style={{width: '30%'}}>
         <Image

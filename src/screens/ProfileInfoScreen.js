@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {View, Text, StyleSheet, SafeAreaView, TextInput, Button, Alert} from 'react-native'
 import { MaterialIcons, Ionicons, FontAwesome, FontAwesome5, Entypo, EvilIcons } from '@expo/vector-icons';
 import { Auth, DataStore } from 'aws-amplify'
@@ -29,23 +29,23 @@ const ProfileInfoScreen = () => {
     // else{
     //   await createUser();
     // }
-   }
-
-   const createUser = async () => { 
-    try {
-      const user = await DataStore.save(new UserMobile({
-        sub: sub,
-        address: address,
-        lat: parseFloat(lat),
-        lng: parseFloat(lng),
-        name: fullname
-      }))
-      console.log("The user is: ",user);
-      setDbUser(user)
-    } catch (error) {
-      Alert.alert("Error", error.message)
-    }
   }
+
+  // const createUser = async () => { 
+  //   try {
+  //     const user = await DataStore.save(new UserMobile({
+  //       sub: sub,
+  //       address: address,
+  //       lat: parseFloat(lat),
+  //       lng: parseFloat(lng),
+  //       name: fullname
+  //     }))
+  //     console.log("The user is: ",user);
+  //     setDbUser(user)
+  //   } catch (error) {
+  //     Alert.alert("Error", error.message)
+  //   }
+  // }
 
     const updateUser = async () => { 
         const user = await DataStore.save(
@@ -58,7 +58,12 @@ const ProfileInfoScreen = () => {
           })
         )
         setDbUser(user)
-     }
+    }
+
+    useEffect(() => {
+      console.warn("dbUser: ", dbUser?.name);
+    }, [])
+    
 
 
   return (

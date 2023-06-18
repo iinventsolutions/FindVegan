@@ -48,46 +48,8 @@ const RootNavigator = () => {
 
   const { user } = useAuthContext();
 
-  // const [user, setUser] = useState(undefined)
-
-  // const checkUser = async() => { 
-  //   try {
-  //     const authUser = await Auth.currentAuthenticatedUser({ bypassCache: true})
-  //     setUser(authUser)
-  //     console.log(user)
-  //   } catch (error) {
-  //     setUser(null)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   checkUser();
-  // }, [])
-
-  // useEffect(() => {
-  //   const listener = (data) =>{ 
-  //     if(data.payload.event === 'signIn' || data.payload.event === 'signOut'){
-  //       checkUser();
-  //     }
-  //   }
-
-  //   const subscription = Hub.listen('auth', listener);
-  //   return () => subscription.unsubscribe();
-  // }, [])
-
   const [showOnboarding, setShowOnboarding] = useState(false);
 
-  const clearAsyncStorage = async () => {
-    try {
-      await AsyncStorage.clear();
-    } catch (error) {
-      console.error('Error clearing AsyncStorage: ', error.message);
-    }
-  };
-
-  // useEffect(() => {
-  //   clearAsyncStorage()
-  // }, [])
   
 
   useEffect(() => {

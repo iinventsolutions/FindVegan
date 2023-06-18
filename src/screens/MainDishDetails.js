@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, StyleSheet, Image, ScrollView, FlatList, Pressable} from 'react-native'
+import {View, Text, StyleSheet, Image, ScrollView, FlatList, Pressable, Alert} from 'react-native'
 import Checkbox from 'expo-checkbox';
 import CircularButton from '../components/CircularButton'
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-import { Dish } from '../models';
+import { Dish, Toppings } from '../models';
 import { DataStore, Storage } from 'aws-amplify'
 import { useStateValue } from '../components/BasketContex/StateProvider';
 
@@ -20,16 +20,18 @@ const MainDishDetails = () => {
 
     const navigation = useNavigation();
     const [{basket}, dispatch] = useStateValue()
-    const [imageLink, setImageLink] = useState(null)
+    // const [imageLink, setImageLink] = useState(null)
     // const { addDishToBasket} = useBasketContext()
 
     const route = useRoute()
     const id = route.params?.id
+    const imgLink = route.params?.imageLink
     // const restaurantId = route.params?.resId
   
     // console.warn("res id", restaurantId)
 
     const [dish, setDish] = useState()
+    const [toppings, setToppings] = useState([])
     const [itemNum, setItemNum] = useState(1)
 
     const Dressing = ['Caramal', 'Chocolate', 'Custard', 'Blueberry Jam', 'Strawberry Jam', 'Sprinkles', 'Cream Cheese', 'Whipped Cream']
@@ -53,7 +55,7 @@ const MainDishDetails = () => {
      }
 
     // Fetching A single dish
-    const fetchADish = async () =>{
+    const fetchADish = async () => {
       try {
         const results = await DataStore.query(Dish, id)
         setDish(results)
@@ -62,6 +64,16 @@ const MainDishDetails = () => {
       }
       
     }
+
+    const fetchTopping = async() => { 
+      try {
+        const results = await DataStore.query(Toppings, (topping)=> topping.dishID.eq(id))
+        setToppings(results)
+        console.log('toppingss: ',results)
+      } catch (error) {
+        Alert.alert(error)
+      }
+     }
 
     // const addToCart = () => { 
     //     // navigation.navigate("Cart", {dishItem: 'Pizza'})
@@ -85,35 +97,42 @@ const MainDishDetails = () => {
       navigation.goBack()      
    };
 
-    const getImage = async() => {  
-      const file = await Storage.get(dish?.image, {
-      level: "public"
-    });
-    // console.log("the image: ",file)
-    setImageLink(file)
-  }
+  //   const getImage = async() => {  
+  //     const file = await Storage.get(`DishImages/${dish?.image}`, {
+  //     level: "public"
+  //   });
+  //   // console.log("the image: ",file)
+  //   setImageLink(file)
+  // }
 
     useEffect(() => {
       if(id){
         fetchADish()
+
       }
       console.log("The navigation state: ", index);
     }, [id])
 
     useEffect(() => {
-      if(dish?.image){
-        getImage()
-      }
+      fetchTopping()
     }, [])
 
-    console.log(imageLink)
+
+    
+    // useEffect(() => {
+    //   if(dish?.image){
+    //     getImage()
+    //   }
+    // }, [])
+
+    console.log(imgLink)
     
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Image
-            source={{uri: imageLink}}
+            source={{uri: imgLink}}
             style={{ width: "100%", height: 310, }}
             // resizeMode="cover"
         />
@@ -134,7 +153,7 @@ const MainDishDetails = () => {
 
       <View style={styles.ListItemsContainer}>
         <FlatList 
-            data = {Dressing}
+            data = {toppings[0]?.name}
             renderItem = {({item})=> <CheckboxComp dressing={item} />}
             showsVerticalScrollIndicator = {false}
         />

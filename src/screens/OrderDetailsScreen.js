@@ -8,6 +8,9 @@ import { useStateValue } from '../components/BasketContex/StateProvider';
 import CartItem from '../components/CartItem';
 import { useRoute } from '@react-navigation/native';
 import { useOrderContext } from '../contexts/OrderContex';
+import Toast from 'react-native-toast-message'
+import { DataStore } from 'aws-amplify';
+import { UserMobile } from '../models';
 
 // BottomSheet imports
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
@@ -17,14 +20,18 @@ import LoadingItems from '../components/LoadingItems';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { GOOGLE_MAP_API } from '../Utils/Constants';
+import { useAuthContext } from '../contexts/AuthContext';
 
 // Google Autocomplete imports
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 
 const OrderDetailsScreen = () => {
 
   navigator.geolocation = require('react-native-geolocation-service');
 
+  const { sub, setDbUser, dbUser } = useAuthContext();
+  const { createOrder } = useOrderContext()
   // BottomSheet Start
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isOpen, setIsOpen] = useState(false)
@@ -41,7 +48,7 @@ const OrderDetailsScreen = () => {
   }, []);
   // BottomSheet end
 
-  // const { createOrder } = useOrderContext()
+
 
   const navigation = useNavigation();
   const [{basket}, dispatch] = useStateValue();
@@ -52,15 +59,50 @@ const OrderDetailsScreen = () => {
 
   const checkOut = () => { 
     navigation.navigate("Payment Options")
-   }
+  }
 
-   const handleCreateOrder = () => { 
+  const handleCreateOrder = () => { 
     // createOrder()
     navigation.navigate("Payment Options", {df})
     }
 
+  // Toast Message TODO
+  const showToast = (lat, lng) => {
+    // console.warn("Test: ",lat, lng)
+    Toast.show({
+      type: 'success',
+      text1: 'Location selected',
+      text2: `lat: ${lat}, lng: ${lng}`,
+      // props: {style: {fontSize: 20}}
+    });
+    
+  }
+
+  const showErrorToast = (err) => {
+    Toast.show({
+      type: 'error',
+      text1: `${err.message}`,
+      // props: {style: {fontSize: 20}}
+    });
+  }
+
+  const updateUser = async (lat, lng) => {
+    // console.warn(lat, lng)
+    try {
+      await DataStore.save(
+        UserMobile.copyOf(dbUser, updated => {
+          updated.lat = parseFloat(lat);
+          updated.lng = parseFloat(lng);
+        })
+      )
+      // setDbUser(user)
+      showToast(lat, lng)
+    } catch (error) {
+      showErrorToast(error)
+    }
+  }
+
   // Expo Geo-Location Starts here
-  
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -68,20 +110,25 @@ const OrderDetailsScreen = () => {
       return;
     }
   
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    let locationData = await Location.getCurrentPositionAsync({});
+    
     // console.log("Location details: ",location)
-    if(location){
-      console.warn("lat: ",location?.coords?.latitude, "lng: ", location?.coords?.longitude)
+    if(locationData){
+      setLocation(locationData);
+      // console.warn(location?.coords?.latitude, location?.coords?.longitude)
+      // updateUser(location?.coords?.latitude, location?.coords?.longitude)
+      console.warn("Location fetched")
     }else{
+      // showErrorToast()
       console.warn("Error getting location...")
     }
   };
   
   useEffect(() => {
-    // getLocation();
+    getLocation();
   }, []);
 
+  
 
   // Expo Geo-Location Ends here
 
@@ -149,8 +196,10 @@ const OrderDetailsScreen = () => {
                 getCurrentLocation
                 onPress={(data, details = null) => {
                   // 'details' is provided when fetchDetails = true
-                  console.log("Map data is: ",data);
-                  setGooglePlaceName(data.description)
+                  // console.log("Map data is: ",details);
+                  // console.warn(details.geometry.location.lat, details.geometry.location.lng)
+                  updateUser(details.geometry.location.lat, details.geometry.location.lng)
+                  // setGooglePlaceName(data.description)
                 }}
                 onFail={(error) => console.error("Map error is: ",error)}
                 query={{
@@ -164,7 +213,7 @@ const OrderDetailsScreen = () => {
           </View>
           {/* Google Places autocomplete ends here */}
           <View style={{display: 'flex', width: '100%', marginTop: 10}}>
-            <Text style={{fontWeight: '500', color: 'gray'}} onPress={getLocation}>Select Current Location</Text>
+            <Text style={{fontWeight: '500', color: 'gray'}} onPress={()=>updateUser(location?.coords?.latitude, location?.coords?.longitude)}>Select Current Location</Text>
           </View>
 
               <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>

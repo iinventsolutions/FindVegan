@@ -10,6 +10,7 @@ import { useStateValue } from '../components/BasketContex/StateProvider';
 import { UserMobile } from '../models/index';
 import * as Location from 'expo-location';
 import { useAuthContext } from '../contexts/AuthContext';
+import Toast from 'react-native-toast-message'
 
 
 
@@ -17,11 +18,28 @@ const HomeScreen = () => {
 
     const index = useNavigationState(state => state.index);
 
-    const { dbUser } = useAuthContext();
+    const { dbUser, setDbUser } = useAuthContext();
 
     const [restaurant, setRestaurant] = useState([])
     const [locationdata, setLocationData] = useState(null); 
     const [{ basket }, dispatch] = useStateValue()
+
+    const showToast = (lat, lng) => {
+        Toast.show({
+            type: 'success',
+            text1: 'Location selected',
+            text2: `lat: ${lat}, lng: ${lng}`,
+            props: {style: {fontSize: 20}}
+        });
+    }
+    
+    const showErrorToast = (err) => {
+        Toast.show({
+            type: 'error',
+            text1: `${err.message}`,
+            props: {style: {fontSize: 20}}
+        });
+    }
 
     const fetchRestaurants = async () =>{
         try {
@@ -36,13 +54,20 @@ const HomeScreen = () => {
     }
 
     const updateUser = async () => { 
-        await DataStore.save(
-          UserMobile.copyOf(dbUser, updated => {
-            updated.lat = parseFloat(locationdata?.coords?.latitude);
-            updated.lng = parseFloat(locationdata?.coords?.longitude);
-          })
-        )
-     }
+        try {
+            const user = await DataStore.save(
+                UserMobile.copyOf(dbUser, updated => {
+                updated.lat = parseFloat(locationdata?.coords?.latitude);
+                updated.lng = parseFloat(locationdata?.coords?.longitude);
+                })
+            )
+            setDbUser(user)
+            showToast(locationdata?.coords?.latitude, locationdata?.coords?.longitude)
+        } catch (error) {
+            showErrorToast()
+        }
+
+    }
 
     const getLocation = async () => {
         try {
@@ -57,7 +82,8 @@ const HomeScreen = () => {
             setLocationData(location);
             // console.log("Location details: ",location)
             if(location){
-                console.warn("lat: ",location?.coords?.latitude, "lng: ", location?.coords?.longitude)
+                // console.warn("lat: ",location?.coords?.latitude, "lng: ", location?.coords?.longitude)
+                
             }else{
                 console.warn("Error getting location...")
             }
@@ -69,7 +95,7 @@ const HomeScreen = () => {
             Alert.alert(error)
         }
         
-      };
+    };
     
 
 
@@ -80,63 +106,63 @@ const HomeScreen = () => {
     }, [])
 
     useEffect(() => {
-        // getLocation()
-    }, [dbUser])
+        getLocation()
+    }, [])
     
     
 
-  return (
+    return (
     
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View>
-            <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Top Restaurants</Text>
-        </View>
-        {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}> */}
-            {/* <TopRestaurants /> */}
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <View>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Top Restaurants</Text>
+            </View>
+            {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}> */}
+                {/* <TopRestaurants /> */}
+                <FlatList 
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    data = {restaurant}
+                    renderItem = {({item})=> <TopRestaurants restaurant={item} />}
+                    showsVerticalScrollIndicator = {false}
+                />
+            {/* </ScrollView> */}
+            <View>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Nearest Restaurants</Text>
+            </View>
+            {/* <NearestRestaurants /> */}
             <FlatList 
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data = {restaurant}
-                renderItem = {({item})=> <TopRestaurants restaurant={item} />}
-                showsVerticalScrollIndicator = {false}
-            />
-        {/* </ScrollView> */}
-        <View>
-            <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Nearest Restaurants</Text>
-        </View>
-        {/* <NearestRestaurants /> */}
-        <FlatList 
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data = {restaurant.filter((item)=>item.lat <= 46.5)}
-                renderItem = {({item})=> <NearestRestaurants restaurant={item} />}
-                showsVerticalScrollIndicator = {false}
-            />
-        <View>
-            <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Must Try</Text>
-        </View>
-        {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}> */}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    data = {restaurant.filter((item)=>item.lat <= 46.5)}
+                    renderItem = {({item})=> <NearestRestaurants restaurant={item} />}
+                    showsVerticalScrollIndicator = {false}
+                />
+            <View>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>Must Try</Text>
+            </View>
+            {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}> */}
+                <FlatList 
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    data = {restaurant.filter((item)=>item.rating >= 3)}
+                    renderItem = {({item})=> <TopRestaurants restaurant={item} />}
+                    showsVerticalScrollIndicator = {false}
+                />
+            {/* </ScrollView> */}
+            <View>
+                <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>All Restaurants</Text>
+            </View>
+            {/* <NearestRestaurants /> */}
             <FlatList 
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                data = {restaurant.filter((item)=>item.rating >= 3)}
-                renderItem = {({item})=> <TopRestaurants restaurant={item} />}
-                showsVerticalScrollIndicator = {false}
-            />
-        {/* </ScrollView> */}
-        <View>
-            <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>All Restaurants</Text>
-        </View>
-        {/* <NearestRestaurants /> */}
-        <FlatList 
-                vertical
-                // showsVerticalScrollIndicator={false}
-                data = {restaurant}
-                renderItem = {({item})=> <AllRestaurants restaurant={item} />}
-                showsVerticalScrollIndicator = {false}
-            />
-    </ScrollView>
-  )
+                    vertical
+                    // showsVerticalScrollIndicator={false}
+                    data = {restaurant}
+                    renderItem = {({item})=> <AllRestaurants restaurant={item} />}
+                    showsVerticalScrollIndicator = {false}
+                />
+        </ScrollView>
+    )
 }
 
 export default HomeScreen;

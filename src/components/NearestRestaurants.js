@@ -1,22 +1,39 @@
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, Pressable} from 'react-native'
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Storage } from 'aws-amplify'
 
 const DEFAULT_IMAGE = 'https://media-cdn.tripadvisor.com/media/photo-s/10/00/b6/f6/pizza-good-wine.jpg'
 
 const NearestRestaurants = ({restaurant}) => {
 
     const navigation = useNavigation();
+    const [imageLink, setImageLink] = useState(null)
 
     const goToRestaurantDetails = () => { 
-        navigation.navigate("RestaurantDetails", {id: restaurant.id})
+        navigation.navigate("RestaurantDetails", {id: restaurant.id, imageLink:imageLink})
      }
+
+     const getImage = async() => {  
+        const file = await Storage.get(`RestaurantImages/${restaurant?.image}`, {
+          level: "public"
+        });
+        // console.log("the image: ",file)
+        setImageLink(file)
+      }
+  
+      useEffect(() => {
+        if(restaurant?.image){
+          getImage()
+        }
+      }, [])
 
   return (
     <Pressable onPress={goToRestaurantDetails} style={styles.container}>
         <View >
             <View style={styles.ImgWrapper}>
-                <Image source={{uri: restaurant?.image}} style={styles.ImageContainer} />
+                <Image source={{uri: restaurant?.image ? imageLink : DEFAULT_IMAGE}} style={styles.ImageContainer} />
                 <View style={styles.foodRating}>
                     <AntDesign name="star" size={16} color="yellow" />
                     <AntDesign name="star" size={16} color="yellow" />

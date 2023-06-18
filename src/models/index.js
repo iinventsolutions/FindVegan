@@ -18,9 +18,10 @@ const OrderStatus = {
   "RESTAURANT_DECLINED": "RESTAURANT_DECLINED"
 };
 
-const { OrderDish, Dish, UserMobile, Order, Restaurant, RestaurantOwner } = initSchema(schema);
+const { Toppings, OrderDish, Dish, UserMobile, Order, Restaurant, RestaurantOwner } = initSchema(schema);
 
 export {
+  Toppings,
   OrderDish,
   Dish,
   UserMobile,

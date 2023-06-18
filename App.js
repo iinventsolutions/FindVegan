@@ -15,6 +15,7 @@ import { AuthContextProvider } from './src/contexts/AuthContext';
 import { OrderContextProvider } from './src/contexts/OrderContex';
 import SearchScreen from './src/screens/SearchScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import Toast from 'react-native-toast-message';
 // import OnboardingNavigator from './src/navigation/OnboardingNavigator';
 
 
@@ -33,7 +34,10 @@ function App() {
             
             <StatusBar style="auto" />
               <RootNavigator />
-            
+              <Toast 
+              position='bottom'
+              bottomOffset={20}
+              />
           </OrderContextProvider>
           </NavigationContainer>
         </AuthContextProvider>

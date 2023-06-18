@@ -45,7 +45,7 @@ const SignUpScreen = () => {
       })
 
       // await Auth.updateUserAttributes(registeringUser, {
-      //   'custom:favorite_ice_cream': 'vanilla'
+      //   'custom:groups': 'MobileUsersPool'
       // });
 
       const {userSub} = registeringUser

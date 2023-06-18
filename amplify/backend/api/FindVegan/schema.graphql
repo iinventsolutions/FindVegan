@@ -1,3 +1,9 @@
+type Toppings @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: [String]
+  dishID: ID! @index(name: "byDish")
+}
+
 enum PlanSubscription {
   FREE
   BASIC
@@ -57,8 +63,12 @@ type Dish @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   image: String
-  description: String
-  price: Float
+  description: String!
+  price: Float!
+  currency: String
+  Toppings: [Toppings] @hasMany(indexName: "byDish", fields: ["id"])
+  maxPreparationTime: Int
+  minPreparationTime: Int
   restaurantID: ID! @index(name: "byRestaurant")
 }
 

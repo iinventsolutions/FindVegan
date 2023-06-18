@@ -49,10 +49,26 @@ export function AuthContextProvider({children}){
         return () => subscription.unsubscribe();
       }, [])
     // End of new Auth flow
+
+    useEffect(() => {
+      // if(!dbUser){
+      //   return;
+      // }
+      try {
+        const subscription = DataStore.observe(UserMobile, dbUser?.id).subscribe(msg => {
+          if(msg.opType === 'UPDATE'){
+            setDbUser(msg.element)
+          }
+        });
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        console.error('Error observing User:', error);
+      }
+    }, [dbUser?.id])
     
 
     // console.log("The sub id is: ",sub);
-
+    console.log("Uer data: ",dbUser);
     return(
         <AuthContext.Provider 
             value={{

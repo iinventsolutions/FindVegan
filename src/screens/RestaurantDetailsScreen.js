@@ -2,7 +2,7 @@ import React, { useState, useEffect, FlatList } from 'react'
 import {View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, Pressable, SafeAreaView, Alert} from 'react-native'
 import PopularOrders from '../components/PopularOrders';
 import { useRoute } from '@react-navigation/native';
-import { DataStore } from 'aws-amplify' 
+import { DataStore, Storage } from 'aws-amplify' 
 import { Restaurant, Dish } from '../models';
 import { getBasketTotal } from '../components/BasketContex/reducer';
 import { useStateValue } from '../components/BasketContex/StateProvider';
@@ -14,6 +14,7 @@ import { AntDesign,
         MaterialIcons
         } from '@expo/vector-icons';
 import MainDishesListItem from '../components/MainDishesListItem';
+import { Order } from '../models';
 // import { useBasketContext } from '../contexts/BasketContex';
 
 const RestaurantDetailsScreen = () => {
@@ -27,9 +28,11 @@ const RestaurantDetailsScreen = () => {
   const [dishes, setDishes] = useState(null)
   const [{ basket }, dispatch] = useStateValue()
   const { setRestaurantForOrder} = useOrderContext()
+  const [getPopularOrders, setGetPopularOrders] = useState([])
 
   const route = useRoute()
   const id = route.params?.id
+  const imgLink = route.params?.imageLink
 
   // console.warn(id)
 
@@ -51,7 +54,35 @@ const RestaurantDetailsScreen = () => {
       type: 'DELETE_ALL',
     })
     navigation.goBack()
-   }
+  }
+
+  // get popular dishes
+  async function fetchPopularDishes(numDishes) {
+    const orders = await DataStore.query(Order, o => o.Restaurant.id.eq(id));
+    const dishPopularity = new Map();
+  
+    // Use Promise.all() to wait for all OrderDishes arrays to be fetched asynchronously
+    const orderDishesPromises = orders?.map(order => order?.OrderDish);
+    const orderDishesArrays = await Promise.all(orderDishesPromises);
+    console.log("CHECK: ", orderDishesArrays)
+
+    // Iterate over each orderDishes array and add up the popularity of each dish
+    orderDishesArrays.forEach(orderDishes => {
+      orderDishes.forEach(orderDish => {
+        const dishID = orderDish.id;
+        const dishCount = orderDish.quantity;
+
+        dishPopularity.set(dishID, (dishPopularity.get(dishID) || 0) + dishCount);
+      });
+    });
+
+    const sortedDishes = [...dishPopularity.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, numDishes)
+      .map(([id, count]) => ({ id, count }));
+
+    return sortedDishes;
+  }
 
   //  This function handles the go back method when leaving the restaurant screen
 
@@ -78,7 +109,7 @@ const RestaurantDetailsScreen = () => {
     } else{
       navigation.goBack()
     }
-   }
+  }
 
   useEffect(() => {
       if(!id){
@@ -90,6 +121,11 @@ const RestaurantDetailsScreen = () => {
       fetchDish()
       console.log("The navigation state is: ", index);
   }, [id])
+
+  useEffect(() => {
+    fetchPopularDishes(5).then(setGetPopularOrders)
+  }, [])
+  
 
   
   
@@ -122,7 +158,7 @@ const RestaurantDetailsScreen = () => {
 
         <View>
               <Image
-                  source={{uri: restaurant?.image}}
+                  source={{uri: imgLink}}
                   style={{ width: "100%", height: 310, }}
                   // resizeMode="cover"
               />
@@ -132,7 +168,7 @@ const RestaurantDetailsScreen = () => {
                 color="white"
                 style={styles.backIcon}
                 onPress={handleLeaveDetailsScreen}
-             />
+              />
         </View>
 
         <View style={styles.restaurantName}>
@@ -174,11 +210,14 @@ const RestaurantDetailsScreen = () => {
 
       <Text style={{padding: 15, fontSize: 23, fontWeight: 'bold'}}>Popular Orders</Text>
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.TopRestaurantsView}>
+          {getPopularOrders.map(pOrders => (
+            <PopularOrders />
+          ))}
           <PopularOrders />
           <PopularOrders />
+          {/* <PopularOrders />
           <PopularOrders />
-          <PopularOrders />
-          <PopularOrders />
+          <PopularOrders /> */}
       </ScrollView>
       <View>
         <Text style={{padding: 15, fontSize: 23, fontWeight: 'bold'}}>Main Dishes</Text>

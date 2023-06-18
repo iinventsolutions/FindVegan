@@ -18,6 +18,10 @@ export enum OrderStatus {
   RESTAURANT_DECLINED = "RESTAURANT_DECLINED"
 }
 
+type ToppingsMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type OrderDishMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -40,6 +44,28 @@ type RestaurantMetaData = {
 
 type RestaurantOwnerMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type EagerToppings = {
+  readonly id: string;
+  readonly name?: (string | null)[] | null;
+  readonly dishID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyToppings = {
+  readonly id: string;
+  readonly name?: (string | null)[] | null;
+  readonly dishID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Toppings = LazyLoading extends LazyLoadingDisabled ? EagerToppings : LazyToppings
+
+export declare const Toppings: (new (init: ModelInit<Toppings, ToppingsMetaData>) => Toppings) & {
+  copyOf(source: Toppings, mutator: (draft: MutableModel<Toppings, ToppingsMetaData>) => MutableModel<Toppings, ToppingsMetaData> | void): Toppings;
 }
 
 type EagerOrderDish = {
@@ -72,8 +98,12 @@ type EagerDish = {
   readonly id: string;
   readonly name: string;
   readonly image?: string | null;
-  readonly description?: string | null;
-  readonly price?: number | null;
+  readonly description: string;
+  readonly price: number;
+  readonly currency?: string | null;
+  readonly Toppings?: (Toppings | null)[] | null;
+  readonly maxPreparationTime?: number | null;
+  readonly minPreparationTime?: number | null;
   readonly restaurantID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -83,8 +113,12 @@ type LazyDish = {
   readonly id: string;
   readonly name: string;
   readonly image?: string | null;
-  readonly description?: string | null;
-  readonly price?: number | null;
+  readonly description: string;
+  readonly price: number;
+  readonly currency?: string | null;
+  readonly Toppings: AsyncCollection<Toppings>;
+  readonly maxPreparationTime?: number | null;
+  readonly minPreparationTime?: number | null;
   readonly restaurantID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
